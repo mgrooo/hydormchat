@@ -515,7 +515,10 @@ def read_local_question_logs():
 # Google Sheets
 # -----------------------------
 def get_gspread_client():
-    creds_info = dict(st.secrets["gcp_service_account"])
+    try:
+        creds_info = dict(st.secrets["gcp_service_account"])
+    except Exception:
+        return None
 
     scopes = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -532,7 +535,14 @@ def get_gspread_client():
 
 def get_log_worksheet():
     gc = get_gspread_client()
-    sheet_name = st.secrets["GOOGLE_SHEET_NAME"]
+    if gc is None:
+        return None
+
+    try:
+        sheet_name = st.secrets["GOOGLE_SHEET_NAME"]
+    except Exception:
+        return None
+
     sh = gc.open(sheet_name)
     return sh.sheet1
 
@@ -540,6 +550,9 @@ def get_log_worksheet():
 def append_google_sheet_log(question, selected_user_type, sources_text="", answer_preview=""):
     try:
         ws = get_log_worksheet()
+        if ws is None:
+            return False
+
         ws.append_row([
             datetime.now().isoformat(timespec="seconds"),
             question,
@@ -556,6 +569,8 @@ def append_google_sheet_log(question, selected_user_type, sources_text="", answe
 def read_google_sheet_logs():
     try:
         ws = get_log_worksheet()
+        if ws is None:
+            return []
         rows = ws.get_all_records()
         return rows
     except Exception as e:
@@ -590,6 +605,30 @@ def get_question_stats():
 def get_top_questions(limit=6):
     stats = get_question_stats()
     return [q for q, _ in stats[:limit]]
+
+
+def normalize_question_for_button(q: str) -> str:
+    return re.sub(r"\s+", "", q.strip()).lower()
+
+
+def build_quick_questions():
+    top_logged_questions = get_top_questions(limit=6)
+
+    if top_logged_questions:
+        base_questions = top_logged_questions + DEFAULT_QUICK_QUESTIONS
+    else:
+        base_questions = DEFAULT_QUICK_QUESTIONS
+
+    seen = set()
+    deduped = []
+
+    for q in base_questions:
+        nq = normalize_question_for_button(q)
+        if nq not in seen:
+            seen.add(nq)
+            deduped.append(q)
+
+    return deduped[:9]
 
 
 # -----------------------------
@@ -696,11 +735,7 @@ st.caption(f"등록된 PDF 페이지 수: {len(all_pages)} | 검색용 문서 �
 # -----------------------------
 # FAQ / 빠른 질문
 # -----------------------------
-top_logged_questions = get_top_questions(limit=6)
-if top_logged_questions:
-    quick_questions = list(dict.fromkeys(top_logged_questions + DEFAULT_QUICK_QUESTIONS))[:9]
-else:
-    quick_questions = DEFAULT_QUICK_QUESTIONS
+quick_questions = build_quick_questions()
 
 st.subheader("빠른 질문")
 st.caption("자주 묻는 질문과 기본 질문을 버튼으로 제공합니다.")
@@ -710,6 +745,7 @@ for i, q in enumerate(quick_questions):
     with cols[i % 3]:
         if st.button(q, key=f"quick_{i}"):
             st.session_state.pending_question = q
+            st.rerun()
 
 # -----------------------------
 # 이전 대화 표시
