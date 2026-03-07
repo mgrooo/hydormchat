@@ -20,7 +20,7 @@ from google.oauth2.service_account import Credentials
 # 페이지 설정
 # -----------------------------
 st.set_page_config(
-    page_title="한양대(서울) 학생생활관 챗봇",
+    page_title="한양대(서울) 학생생활관 챗봇(BETA)",
     page_icon="🏫",
     layout="wide"
 )
@@ -314,7 +314,7 @@ with col1:
 with col2:
     st.markdown("""
     <div class="banner-card">
-        <div class="banner-title">한양대(서울) 학생생활관 챗봇</div>
+        <div class="banner-title">한양대(서울) 학생생활관 챗봇(BETA)</div>
         <div class="banner-subtitle">
             학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
             Answers are based on the dormitory recruitment guidelines and official documents.
@@ -1570,6 +1570,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
