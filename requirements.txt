@@ -5,3 +5,4 @@ pymupdf
 numpy
 gspread
 google-auth
+pandas
