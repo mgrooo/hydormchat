@@ -529,23 +529,24 @@ def get_gspread_client():
         creds_info,
         scopes=scopes
     )
+
     return gspread.authorize(credentials)
 
 
 def get_log_worksheet():
-    if "GOOGLE_SHEET_NAME" not in st.secrets:
-        raise ValueError("secrets.toml에 GOOGLE_SHEET_NAME 이 없습니다.")
+    if "GOOGLE_SHEET_ID" not in st.secrets:
+        raise ValueError("secrets.toml에 GOOGLE_SHEET_ID 가 없습니다.")
 
     gc = get_gspread_client()
-    sheet_name = st.secrets["GOOGLE_SHEET_NAME"]
 
-    sh = gc.open(sheet_name)
+    sheet_id = st.secrets["GOOGLE_SHEET_ID"]
 
-    # 문서의 첫 번째 워크시트를 가져옴
+    sh = gc.open_by_key(sheet_id)
+
     ws = sh.get_worksheet(0)
 
-    # 헤더가 비어 있으면 자동 생성
-    if ws.row_count == 0 or not ws.cell(1, 1).value:
+    # 헤더 없으면 자동 생성
+    if not ws.cell(1,1).value:
         ws.update("A1:E1", [[
             "timestamp",
             "question",
@@ -560,7 +561,6 @@ def get_log_worksheet():
 def append_google_sheet_log(question, selected_user_type, sources_text="", answer_preview=""):
     try:
         ws = get_log_worksheet()
-        st.error(repr(e))
 
         ws.append_row([
             datetime.now().isoformat(timespec="seconds"),
@@ -571,6 +571,7 @@ def append_google_sheet_log(question, selected_user_type, sources_text="", answe
         ])
 
         st.success("Google Sheets 로그 저장 성공")
+
         return True
 
     except Exception as e:
@@ -878,6 +879,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
