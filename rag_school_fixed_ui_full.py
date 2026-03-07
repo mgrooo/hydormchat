@@ -515,43 +515,39 @@ def read_local_question_logs():
 # Google Sheets
 # -----------------------------
 def get_gspread_client():
-    try:
-        creds_info = dict(st.secrets["gcp_service_account"])
-    except Exception:
-        return None
+    if "gcp_service_account" not in st.secrets:
+        raise ValueError("secrets.toml에 [gcp_service_account] 가 없습니다.")
+
+    creds_info = dict(st.secrets["gcp_service_account"])
 
     scopes = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive"
     ]
 
-    credentials = Credentials.from_service_account_info(
-        creds_info,
-        scopes=scopes
-    )
+    credentials = Credentials.from_service_account_info(creds_info, scopes=scopes)
+    gc = gspread.authorize(credentials)
+    return gc
 
-    return gspread.Client(auth=credentials)
 
 def get_log_worksheet():
     gc = get_gspread_client()
-    if gc is None:
-        return None
 
-    try:
-        sheet_name = st.secrets["GOOGLE_SHEET_NAME"]
-    except Exception:
-        return None
+    if "GOOGLE_SHEET_NAME" not in st.secrets:
+        raise ValueError("secrets.toml에 GOOGLE_SHEET_NAME 이 없습니다.")
+
+    sheet_name = st.secrets["GOOGLE_SHEET_NAME"]
+    st.write("읽은 시트 이름:", sheet_name)
 
     sh = gc.open(sheet_name)
+    st.write("연결된 스프레드시트 제목:", sh.title)
+
     return sh.sheet1
 
 
 def append_google_sheet_log(question, selected_user_type, sources_text="", answer_preview=""):
     try:
         ws = get_log_worksheet()
-        if ws is None:
-            return False
-
         ws.append_row([
             datetime.now().isoformat(timespec="seconds"),
             question,
@@ -559,11 +555,12 @@ def append_google_sheet_log(question, selected_user_type, sources_text="", answe
             sources_text,
             answer_preview[:200]
         ])
+        st.success("Google Sheets 로그 저장 성공")
         return True
-    except Exception as e:
-        print("Google Sheets 로그 저장 실패:", e)
-        return False
 
+    except Exception as e:
+        st.error(f"Google Sheets 로그 저장 실패: {e}")
+        return False
 
 def read_google_sheet_logs():
     try:
@@ -867,4 +864,5 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
