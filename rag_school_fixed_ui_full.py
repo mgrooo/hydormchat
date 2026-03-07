@@ -1185,18 +1185,18 @@ Please select the options below first.
 </div>
 """, unsafe_allow_html=True)
 
-selected_user_type = st.selectbox(
-    "사용자 유형 선택 / Select User Type",
-    FIXED_CATEGORIES,
-    format_func=lambda x: get_category_display_name(x, current_ui_lang),
-    key="selected_user_type_main"
-)
-
 answer_language = st.selectbox(
     "답변 언어 / Response Language",
     ["한국어", "English"],
     index=0 if current_ui_lang == "한국어" else 1,
     key="answer_language"
+)
+
+selected_user_type = st.selectbox(
+    "사용자 유형 선택 / Select User Type",
+    FIXED_CATEGORIES,
+    format_func=lambda x: get_category_display_name(x, answer_language),
+    key="selected_user_type_main"
 )
 
 ui = get_ui_text(answer_language)
@@ -1570,6 +1570,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
