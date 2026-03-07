@@ -4,6 +4,7 @@ import json
 import pickle
 import hashlib
 import base64
+import textwrap
 import tempfile
 from datetime import datetime
 
@@ -325,7 +326,8 @@ with col2:
 # -----------------------------
 # 상단 사용법 안내
 # -----------------------------
-st.markdown("""
+
+st.markdown(textwrap.dedent("""
 <div class="guide-box">
     <div class="guide-title">
         📌 사용법 / How to Use
@@ -350,7 +352,7 @@ st.markdown("""
         ⚠ For important matters, please always compare and confirm with the original PDF as well.
     </div>
 </div>
-""", unsafe_allow_html=True)
+"""), unsafe_allow_html=True)
 
 # -----------------------------
 # 유틸 함수
@@ -1490,3 +1492,4 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
