@@ -66,32 +66,91 @@ st.set_page_config(
 )
 
 st.markdown("""
+<style>
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.stButton > button {
+    background-color: #0E4A84;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.55rem 1rem;
+    font-weight: 600;
+    width: 100%;
+}
+.stButton > button:hover {
+    background-color: #1B6BB8;
+    color: white;
+}
+
+div[data-baseweb="select"] > div {
+    border-radius: 10px;
+}
+
+div[data-testid="stAlert"] {
+    border-radius: 12px;
+}
+
+.streamlit-expanderHeader {
+    font-weight: 700;
+    color: #0E4A84;
+}
+
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: #0E4A84;
+}
+
+section[data-testid="stSidebar"] div[data-testid="stMetric"] {
+    background: #F7FAFC;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #D9E6F2;
+    margin-bottom: 8px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
 <div style="
-background: linear-gradient(90deg,#0b3c82,#1f5bb5);
-padding:22px;
-border-radius:14px;
-margin-bottom:25px;
-color:white;
-display:flex;
-align-items:center;
-gap:20px;
+background: linear-gradient(90deg, #0E4A84 0%, #1B6BB8 100%);
+padding: 24px 28px;
+border-radius: 18px;
+margin-bottom: 14px;
+box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+color: white;
 ">
-
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Hanyang_University_logo.svg/120px-Hanyang_University_logo.svg.png" width="70">
-
-<div>
-<div style="font-size:34px;font-weight:700;">
-한양대(서울) 학생생활관 챗봇
-</div>
-
-<div style="font-size:16px;opacity:0.9;margin-top:4px;">
-학생생활관 모집요강 및 생활관 안내문서를 기반으로 답변합니다
-</div>
-</div>
-
+    <div style="display:flex; align-items:center; gap:18px;">
+        <div style="font-size:54px; line-height:1;">🏫</div>
+        <div>
+            <div style="font-size:2.1rem; font-weight:800; letter-spacing:-0.3px;">
+                한양대(서울) 학생생활관 챗봇
+            </div>
+            <div style="margin-top:6px; font-size:1rem; opacity:0.92;">
+                학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.
+            </div>
+        </div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
-st.info("💬 생활관 모집요강, 입사신청, 제출서류, 문의처 등을 질문하면 문서를 기반으로 답변합니다.")
+
+st.markdown("""
+<div style="
+background:#F7FAFC;
+border:1px solid #D9E6F2;
+border-radius:14px;
+padding:14px 16px;
+margin-bottom:18px;
+">
+    <b style="color:#0E4A84;">안내</b><br>
+    입사신청기간, 합격자 발표, 생활관비 납부, 제출서류, 문의처 등을 질문하면
+    등록된 모집요강 문서를 바탕으로 안내합니다.
+</div>
+""", unsafe_allow_html=True)
+
 # -----------------------------
 # 유틸 함수
 # -----------------------------
@@ -738,47 +797,53 @@ if "pending_question" not in st.session_state:
 # 사이드바
 # -----------------------------
 with st.sidebar:
-    st.header("본인 유형 선택")
+    st.markdown("## 🏫 한양대(서울)")
+    st.markdown("### 학생생활관 챗봇")
+
+    st.markdown("---")
+    st.subheader("사용자 유형 선택")
 
     selected_user_type = st.selectbox(
         "사용자 유형",
-        FIXED_CATEGORIES
+        FIXED_CATEGORIES,
+        help="질문 전에 본인 유형을 선택하면 해당 모집요강 중심으로 답변합니다."
     )
 
-    st.caption("처음 화면의 선택 항목은 고정되어 있습니다.")
+    st.caption(f"현재 선택: {selected_user_type}")
 
     st.markdown("---")
     st.subheader("운영 도구")
 
-    if st.button("PDF 다시 불러오기"):
+    if st.button("🔄 PDF 다시 불러오기", use_container_width=True):
         st.cache_resource.clear()
         if os.path.exists(RAG_CACHE_FILE):
             os.remove(RAG_CACHE_FILE)
         st.rerun()
 
     logs = read_question_logs()
-    st.caption(f"누적 질문 로그 수: {len(logs)}")
-    st.caption(f"캐시 사용 여부: {'예' if cache_hit else '아니오'}")
+    st.metric("누적 질문 수", len(logs))
+    st.metric("캐시 사용", "예" if cache_hit else "아니오")
 
     st.markdown("---")
-    st.subheader("질문 통계")
+    st.subheader("자주 나온 질문")
+
     stats = get_question_stats()[:10]
     if stats:
         for q, count in stats:
-            st.write(f"{q} ({count})")
+            st.write(f"• {q} ({count})")
     else:
         st.caption("아직 통계가 없습니다.")
-
-st.info(f"현재 선택 유형: {selected_user_type}")
-st.caption(f"등록된 PDF 페이지 수: {len(all_pages)} | 검색용 문서 수: {len(docs)}")
+        
+st.info(f"현재 선택한 사용자 유형: {selected_user_type}")
+st.caption(f"등록된 PDF 페이지 수: {len(all_pages)} · 검색용 문서 수: {len(docs)}")
 
 # -----------------------------
 # FAQ / 빠른 질문
 # -----------------------------
 quick_questions = build_quick_questions()
 
-st.subheader("빠른 질문")
-st.caption("자주 묻는 질문과 기본 질문을 버튼으로 제공합니다.")
+st.subheader("자주 묻는 질문")
+st.caption("버튼을 누르면 바로 질문할 수 있습니다.")
 
 cols = st.columns(3)
 for i, q in enumerate(quick_questions):
@@ -908,6 +973,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
