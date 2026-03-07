@@ -9,7 +9,6 @@ from datetime import datetime
 
 import fitz  # PyMuPDF
 import numpy as np
-import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -829,21 +828,6 @@ def get_question_stats(logs=None):
     return sorted(counter.items(), key=lambda x: x[1], reverse=True)
 
 
-def get_logs_dataframe(logs=None):
-    if logs is None:
-        logs = read_question_logs()
-
-    if not logs:
-        return pd.DataFrame(columns=["timestamp", "question", "user_type", "sources", "answer_preview"])
-
-    df = pd.DataFrame(logs)
-
-    if "timestamp" in df.columns:
-        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
-
-    return df
-
-
 def get_auto_faq_questions(limit=9, min_count=2, answer_language="한국어", logs=None):
     stats = get_question_stats(logs)
 
@@ -962,7 +946,7 @@ if "pending_question" not in st.session_state:
 if "answer_language" not in st.session_state:
     st.session_state["answer_language"] = "한국어"
 
-# 현재 화면에서 재사용할 로그 한 번만 읽기
+# 현재 화면에서 재사용할 로그
 current_logs = read_question_logs()
 
 # -----------------------------
@@ -1073,40 +1057,6 @@ if answer_language == "English":
 else:
     st.info(f"현재 선택한 사용자 유형: {selected_user_type_display} · 답변 언어: {answer_language}")
     st.caption(f"등록된 PDF 페이지 수: {len(all_pages)} · 검색용 문서 수: {len(docs)}")
-
-# -----------------------------
-# 질문 통계 대시보드
-# -----------------------------
-if answer_language == "English":
-    st.subheader("📊 Question Analytics Dashboard")
-else:
-    st.subheader("📊 질문 통계 대시보드")
-
-df_logs = get_logs_dataframe(current_logs)
-
-if not df_logs.empty:
-    col1, col2 = st.columns(2)
-
-    total_questions = len(df_logs)
-    unique_questions = df_logs["question"].nunique() if "question" in df_logs.columns else 0
-
-    if answer_language == "English":
-        col1.metric("Total Questions", total_questions)
-        col2.metric("Unique Questions", unique_questions)
-    else:
-        col1.metric("총 질문 수", total_questions)
-        col2.metric("서로 다른 질문 수", unique_questions)
-
-    st.markdown("#### Top 10 Questions" if answer_language == "English" else "#### 많이 나온 질문 TOP 10")
-    top_q = get_question_stats(current_logs)[:10]
-    if top_q:
-        if answer_language == "English":
-            top_df = pd.DataFrame(top_q, columns=["Question", "Count"])
-        else:
-            top_df = pd.DataFrame(top_q, columns=["질문", "횟수"])
-        st.dataframe(top_df, use_container_width=True)
-else:
-    st.caption("No accumulated question logs yet." if answer_language == "English" else "아직 누적된 질문 로그가 없습니다.")
 
 # -----------------------------
 # FAQ / 빠른 질문
