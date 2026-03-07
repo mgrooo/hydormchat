@@ -1338,13 +1338,10 @@ st.subheader(ui["faq_title"])
 st.caption(ui["faq_caption"])
 
 cols = st.columns(2)
-
 for i, q in enumerate(quick_questions):
-
+    button_key = f"quick_btn_{i}_{normalize_question_for_button(q)}"
     with cols[i % 2]:
-
-        if st.button(q, key=f"quick_{i}", use_container_width=True):
-
+        if st.button(q, key=button_key, use_container_width=True):
             st.session_state.pending_question = q
             st.rerun()
 
@@ -1570,6 +1567,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
