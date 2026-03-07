@@ -765,6 +765,18 @@ def get_log_worksheet():
     return ws
 
 
+@st.cache_data(ttl=60, show_spinner=False)
+def read_google_sheet_logs_cached(sheet_id: str):
+    try:
+        gc = get_gspread_client()
+        sh = gc.open_by_key(sheet_id)
+        ws = sh.get_worksheet(0)
+        rows = ws.get_all_records()
+        return rows
+    except Exception:
+        return []
+
+
 def append_google_sheet_log(question, selected_user_type, sources_text="", answer_preview=""):
     try:
         ws = get_log_worksheet()
@@ -783,11 +795,10 @@ def append_google_sheet_log(question, selected_user_type, sources_text="", answe
 
 def read_google_sheet_logs():
     try:
-        ws = get_log_worksheet()
-        if ws is None:
+        if "GOOGLE_SHEET_ID" not in st.secrets:
             return []
-        rows = ws.get_all_records()
-        return rows
+        sheet_id = st.secrets["GOOGLE_SHEET_ID"]
+        return read_google_sheet_logs_cached(sheet_id)
     except Exception:
         return []
 
@@ -795,6 +806,7 @@ def read_google_sheet_logs():
 def append_question_log(question, selected_user_type, sources_text="", answer_preview=""):
     append_local_question_log(question, selected_user_type, sources_text, answer_preview)
     append_google_sheet_log(question, selected_user_type, sources_text, answer_preview)
+    read_google_sheet_logs_cached.clear()
 
 
 def read_question_logs():
@@ -804,10 +816,11 @@ def read_question_logs():
     return read_local_question_logs()
 
 
-def get_question_stats():
-    logs = read_question_logs()
-    counter = {}
+def get_question_stats(logs=None):
+    if logs is None:
+        logs = read_question_logs()
 
+    counter = {}
     for row in logs:
         q = str(row.get("question", "")).strip()
         if q:
@@ -816,8 +829,10 @@ def get_question_stats():
     return sorted(counter.items(), key=lambda x: x[1], reverse=True)
 
 
-def get_logs_dataframe():
-    logs = read_question_logs()
+def get_logs_dataframe(logs=None):
+    if logs is None:
+        logs = read_question_logs()
+
     if not logs:
         return pd.DataFrame(columns=["timestamp", "question", "user_type", "sources", "answer_preview"])
 
@@ -829,12 +844,8 @@ def get_logs_dataframe():
     return df
 
 
-def convert_df_to_csv(df):
-    return df.to_csv(index=False, encoding="utf-8-sig").encode("utf-8-sig")
-
-
-def get_auto_faq_questions(limit=9, min_count=2, answer_language="한국어"):
-    stats = get_question_stats()
+def get_auto_faq_questions(limit=9, min_count=2, answer_language="한국어", logs=None):
+    stats = get_question_stats(logs)
 
     filtered = []
     for q, count in stats:
@@ -851,40 +862,16 @@ def get_auto_faq_questions(limit=9, min_count=2, answer_language="한국어"):
     return filtered[:limit]
 
 
-def get_semester_label(dt, language="한국어"):
-    if pd.isna(dt):
-        return "Other" if language == "English" else "기타"
-
-    month = dt.month
-    year = dt.year
-
-    if language == "English":
-        if month in [1, 2]:
-            return f"Winter {year}"
-        if month in [3, 4, 5, 6]:
-            return f"Spring {year}"
-        if month in [7, 8]:
-            return f"Summer {year}"
-        return f"Fall {year}"
-
-    if month in [1, 2]:
-        return f"{year} 겨울학기"
-    if month in [3, 4, 5, 6]:
-        return f"{year} 1학기"
-    if month in [7, 8]:
-        return f"{year} 여름학기"
-    return f"{year} 2학기"
-
-
 def normalize_question_for_button(q: str) -> str:
     return re.sub(r"\s+", "", q.strip()).lower()
 
 
-def build_quick_questions(answer_language="한국어"):
+def build_quick_questions(answer_language="한국어", logs=None):
     top_logged_questions = get_auto_faq_questions(
         limit=9,
         min_count=2,
-        answer_language=answer_language
+        answer_language=answer_language,
+        logs=logs
     )
 
     default_questions = (
@@ -975,6 +962,9 @@ if "pending_question" not in st.session_state:
 if "answer_language" not in st.session_state:
     st.session_state["answer_language"] = "한국어"
 
+# 현재 화면에서 재사용할 로그 한 번만 읽기
+current_logs = read_question_logs()
+
 # -----------------------------
 # 사이드바
 # -----------------------------
@@ -1023,18 +1013,24 @@ with st.sidebar:
             os.remove(RAG_CACHE_FILE)
         st.rerun()
 
-    logs = read_question_logs()
-    st.metric(ui["metric_total"], len(logs))
+    st.metric(ui["metric_total"], len(current_logs))
     st.metric(ui["metric_cache"], ui["cache_yes"] if cache_hit else ui["cache_no"])
 
     st.markdown("---")
     st.subheader(ui["section_popular"])
 
-    sidebar_stats = get_auto_faq_questions(limit=10, min_count=1, answer_language=answer_language)
+    sidebar_stats = get_auto_faq_questions(
+        limit=10,
+        min_count=1,
+        answer_language=answer_language,
+        logs=current_logs
+    )
+
     if sidebar_stats:
         sidebar_counter = {}
+        all_stats = get_question_stats(current_logs)
         for q in sidebar_stats:
-            for stat_q, count in get_question_stats():
+            for stat_q, count in all_stats:
                 if stat_q == q:
                     sidebar_counter[q] = count
                     break
@@ -1086,86 +1082,36 @@ if answer_language == "English":
 else:
     st.subheader("📊 질문 통계 대시보드")
 
-df_logs = get_logs_dataframe()
+df_logs = get_logs_dataframe(current_logs)
 
 if not df_logs.empty:
-    csv_data = convert_df_to_csv(df_logs)
-
-    st.download_button(
-        label="📥 Download Question Logs as CSV" if answer_language == "English" else "📥 질문 로그 CSV 다운로드",
-        data=csv_data,
-        file_name=f"question_logs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-        mime="text/csv",
-        use_container_width=True
-    )
-
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
 
     total_questions = len(df_logs)
     unique_questions = df_logs["question"].nunique() if "question" in df_logs.columns else 0
-    user_types = df_logs["user_type"].nunique() if "user_type" in df_logs.columns else 0
 
     if answer_language == "English":
         col1.metric("Total Questions", total_questions)
         col2.metric("Unique Questions", unique_questions)
-        col3.metric("User Types", user_types)
     else:
         col1.metric("총 질문 수", total_questions)
         col2.metric("서로 다른 질문 수", unique_questions)
-        col3.metric("사용자 유형 수", user_types)
-
-    if "user_type" in df_logs.columns:
-        st.markdown("#### User Type Distribution" if answer_language == "English" else "#### 사용자 유형별 질문 수")
-        type_counts = df_logs["user_type"].value_counts()
-        st.bar_chart(type_counts)
 
     st.markdown("#### Top 10 Questions" if answer_language == "English" else "#### 많이 나온 질문 TOP 10")
-    top_q = get_question_stats()[:10]
+    top_q = get_question_stats(current_logs)[:10]
     if top_q:
         if answer_language == "English":
             top_df = pd.DataFrame(top_q, columns=["Question", "Count"])
         else:
             top_df = pd.DataFrame(top_q, columns=["질문", "횟수"])
         st.dataframe(top_df, use_container_width=True)
-
-    st.markdown("#### 📅 Semester Analysis" if answer_language == "English" else "#### 📅 학기별 질문 분석")
-    if "timestamp" in df_logs.columns:
-        df_logs["semester"] = df_logs["timestamp"].apply(lambda x: get_semester_label(x, answer_language))
-
-        sem_counts = df_logs["semester"].value_counts().sort_index()
-        st.bar_chart(sem_counts)
-
-        semester_options = sorted(df_logs["semester"].dropna().unique())
-        if semester_options:
-            selected_semester = st.selectbox(
-                "Select Semester" if answer_language == "English" else "학기 선택",
-                options=semester_options
-            )
-
-            sem_df = df_logs[df_logs["semester"] == selected_semester]
-
-            if answer_language == "English":
-                st.write(f"Number of questions in selected semester: {len(sem_df)}")
-            else:
-                st.write(f"선택 학기 질문 수: {len(sem_df)}")
-
-            if not sem_df.empty and "question" in sem_df.columns:
-                top_sem_q = sem_df["question"].value_counts().head(10)
-                top_sem_df = top_sem_q.reset_index()
-
-                if answer_language == "English":
-                    top_sem_df.columns = ["Question", "Count"]
-                else:
-                    top_sem_df.columns = ["질문", "횟수"]
-
-                st.dataframe(top_sem_df, use_container_width=True)
 else:
     st.caption("No accumulated question logs yet." if answer_language == "English" else "아직 누적된 질문 로그가 없습니다.")
 
 # -----------------------------
 # FAQ / 빠른 질문
 # -----------------------------
-quick_questions = build_quick_questions(answer_language=answer_language)
+quick_questions = build_quick_questions(answer_language=answer_language, logs=current_logs)
 
 if answer_language == "English":
     st.subheader("⭐ Frequently Asked Questions")
