@@ -314,7 +314,7 @@ with col1:
 with col2:
     st.markdown("""
     <div class="banner-card">
-        <div class="banner-title">한양대(서울) 학생생활관 챗봇(BETA)</div>
+        <div class="banner-title">한양대(서울) 학생생활관 챗봇(BETA) - 토리</div>
         <div class="banner-subtitle">
             학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
             Answers are based on the dormitory recruitment guidelines and official documents.
@@ -334,7 +334,7 @@ st.markdown("""
 </div>
 
 <div class="guide-main">
-사용법 : (1) 사용언어 선택(한국어, 영어) (2) 사용자유형 선택 (3) 질문 입력
+사용법 : (1) 사용 언어 선택(한국어, 영어) (2) 사용자 유형 선택 (3) 질문 입력
 </div>
 
 <div class="guide-main">
@@ -1567,6 +1567,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
