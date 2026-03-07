@@ -98,6 +98,8 @@ ENGLISH_SEARCH_MAP = {
     "How can I contact the dormitory office?": "문의 전화번호 연락처 문의처 행정팀 사감실 02-"
 }
 
+ADMIN_PASSWORD = st.secrets.get("ADMIN_PASSWORD", "1234")
+
 # -----------------------------
 # 환경 변수 / API
 # -----------------------------
@@ -180,6 +182,11 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     padding: 14px 16px;
     margin-bottom: 18px;
 }
+
+div[data-testid="stChatMessage"] {
+    border-radius: 16px;
+    padding: 6px 8px;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -213,6 +220,34 @@ with col2:
     """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
+# -----------------------------
+# 상단 사용법 안내
+# -----------------------------
+st.markdown("""
+<div style="
+background:#FFF4CC;
+border:2px solid #E0B100;
+border-radius:14px;
+padding:16px 18px;
+margin-bottom:20px;
+font-size:18px;
+line-height:1.7;
+box-shadow:0 2px 8px rgba(0,0,0,0.06);
+">
+<div style="font-weight:900; color:#8A5A00; margin-bottom:8px;">
+📌 사용법 / How to Use
+</div>
+
+<div style="font-weight:700;">
+사용법 : (1) 사용언어 선택(한국어, 영어) (2) 사용자유형 선택 (3) 질문 입력
+</div>
+
+<div style="margin-top:6px; font-weight:700;">
+How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
+</div>
+</div>
+""", unsafe_allow_html=True)
 
 # -----------------------------
 # 유틸 함수
@@ -274,6 +309,24 @@ def get_category_display_name(category_key: str, lang: str = "한국어") -> str
     if category_key not in CATEGORY_LABELS:
         return category_key
     return CATEGORY_LABELS[category_key]["en"] if lang == "English" else CATEGORY_LABELS[category_key]["ko"]
+
+
+def detect_auto_language(text: str) -> str:
+    if not text:
+        return "한국어"
+    english_letters = len(re.findall(r"[A-Za-z]", text))
+    korean_letters = len(re.findall(r"[가-힣]", text))
+    if english_letters >= 5 and english_letters > korean_letters:
+        return "English"
+    return "한국어"
+
+
+def save_uploaded_pdf(uploaded_file):
+    ensure_directories()
+    save_path = os.path.join(PDF_FOLDER, uploaded_file.name)
+    with open(save_path, "wb") as f:
+        f.write(uploaded_file.read())
+    return save_path
 
 
 def infer_fixed_category(filename: str, first_page_text: str = "") -> str:
@@ -647,8 +700,6 @@ def load_all_pdfs_from_folder():
 def get_ui_text(lang="한국어"):
     if lang == "English":
         return {
-            "sidebar_title_1": "## 🏫 Hanyang Univ. (Seoul)",
-            "sidebar_title_2": "### Dormitory Chatbot",
             "section_user_type": "Select User Type",
             "label_user_type": "User Type",
             "help_user_type": "Select your user type before asking so the chatbot can prioritize the relevant dormitory guide.",
@@ -661,11 +712,44 @@ def get_ui_text(lang="한국어"):
             "cache_yes": "Yes",
             "cache_no": "No",
             "no_stats": "No data yet.",
-            "reload_button": "🔄 Reload PDFs"
+            "reload_button": "🔄 Reload PDFs",
+            "admin_section": "Admin",
+            "admin_password": "Admin Password",
+            "admin_success": "Admin authenticated",
+            "admin_error": "Invalid password",
+            "upload_pdf": "Upload PDF",
+            "upload_success": "Upload completed",
+            "admin_panel": "### 🔧 Admin Panel",
+            "loaded_pages": "Loaded PDF Pages",
+            "searchable_docs": "Searchable Documents",
+            "recent_logs": "Recent Logs",
+            "faq_title": "⭐ Frequently Asked Questions",
+            "faq_caption": "Click a question below to ask instantly. Common questions are updated automatically.",
+            "guide": """
+            <div class="guide-box">
+                <b style="color:#0E4A84;">Guide</b><br>
+                Ask about the dorm application period, result announcement, dorm fee payment,
+                required documents, or contact information, and the chatbot will answer based on
+                the uploaded dormitory guide documents.
+            </div>
+            """,
+            "status_info_prefix": "Selected user type",
+            "status_lang_prefix": "Response language",
+            "status_caption": "Registered PDF pages",
+            "status_caption2": "Searchable documents",
+            "chat_input": "Enter your question",
+            "no_docs": "No documents were found for the selected category",
+            "search_spinner": "Searching relevant pages...",
+            "answer_spinner": "Generating answer...",
+            "expander": "View referenced files/pages",
+            "extract_text": "Extracted Text",
+            "user_type": "User type",
+            "response_language": "Response language",
+            "sources": "Sources",
+            "top_questions_label": "Top Questions"
         }
+
     return {
-        "sidebar_title_1": "## 🏫 한양대(서울)",
-        "sidebar_title_2": "### 학생생활관 챗봇",
         "section_user_type": "사용자 유형 선택",
         "label_user_type": "사용자 유형",
         "help_user_type": "질문 전에 본인 유형을 선택하면 해당 모집요강 중심으로 답변합니다.",
@@ -678,13 +762,45 @@ def get_ui_text(lang="한국어"):
         "cache_yes": "예",
         "cache_no": "아니오",
         "no_stats": "아직 통계가 없습니다.",
-        "reload_button": "🔄 PDF 다시 불러오기"
+        "reload_button": "🔄 PDF 다시 불러오기",
+        "admin_section": "관리자 / Admin",
+        "admin_password": "관리자 비밀번호 / Admin Password",
+        "admin_success": "관리자 인증 완료 / Admin authenticated",
+        "admin_error": "비밀번호가 올바르지 않습니다 / Invalid password",
+        "upload_pdf": "PDF 업로드 / Upload PDF",
+        "upload_success": "업로드 완료",
+        "admin_panel": "### 🔧 관리자 패널",
+        "loaded_pages": "불러온 PDF 페이지 수",
+        "searchable_docs": "검색 문서 수",
+        "recent_logs": "최근 로그 보기",
+        "faq_title": "⭐ 자주 묻는 질문",
+        "faq_caption": "버튼을 누르면 바로 질문할 수 있습니다. 최근 많이 들어온 질문이 자동 반영됩니다.",
+        "guide": """
+        <div class="guide-box">
+            <b style="color:#0E4A84;">안내</b><br>
+            입사신청기간, 합격자 발표, 생활관비 납부, 제출서류, 문의처 등을 질문하면
+            등록된 모집요강 문서를 바탕으로 안내합니다.
+        </div>
+        """,
+        "status_info_prefix": "현재 선택한 사용자 유형",
+        "status_lang_prefix": "답변 언어",
+        "status_caption": "등록된 PDF 페이지 수",
+        "status_caption2": "검색용 문서 수",
+        "chat_input": "질문을 입력하세요",
+        "no_docs": "선택한 유형에 해당하는 문서를 찾지 못했습니다",
+        "search_spinner": "관련 페이지 검색 중...",
+        "answer_spinner": "답변 생성 중...",
+        "expander": "참고한 파일/페이지 보기",
+        "extract_text": "추출 텍스트",
+        "user_type": "선택 유형",
+        "response_language": "답변 언어",
+        "sources": "참고 자료",
+        "top_questions_label": "자주 나온 질문 통계"
     }
 
 
 def is_english_text(text: str) -> bool:
     return bool(re.search(r"[A-Za-z]", text))
-
 
 # -----------------------------
 # 로컬 로그 저장
@@ -719,7 +835,6 @@ def read_local_question_logs():
             except Exception:
                 continue
     return rows
-
 
 # -----------------------------
 # Google Sheets
@@ -770,8 +885,7 @@ def read_google_sheet_logs_cached(sheet_id: str):
         gc = get_gspread_client()
         sh = gc.open_by_key(sheet_id)
         ws = sh.get_worksheet(0)
-        rows = ws.get_all_records()
-        return rows
+        return ws.get_all_records()
     except Exception:
         return []
 
@@ -879,7 +993,6 @@ def build_quick_questions(answer_language="한국어", logs=None):
 
     return deduped[:9]
 
-
 # -----------------------------
 # 캐시 저장 / 불러오기
 # -----------------------------
@@ -889,8 +1002,7 @@ def load_cached_rag_data():
 
     try:
         with open(RAG_CACHE_FILE, "rb") as f:
-            cache_data = pickle.load(f)
-        return cache_data
+            return pickle.load(f)
     except Exception:
         return None
 
@@ -922,9 +1034,7 @@ def load_rag_data(pdf_inventory_signature: str):
     doc_embeddings = get_embeddings_for_texts(doc_texts)
 
     save_cached_rag_data(pdf_inventory_signature, all_pages, docs, doc_embeddings)
-
     return all_pages, docs, doc_embeddings, False
-
 
 # -----------------------------
 # 시작
@@ -946,6 +1056,9 @@ if "pending_question" not in st.session_state:
 if "answer_language" not in st.session_state:
     st.session_state["answer_language"] = "한국어"
 
+if "admin_authenticated" not in st.session_state:
+    st.session_state.admin_authenticated = False
+
 # 현재 화면에서 재사용할 로그
 current_logs = read_question_logs()
 
@@ -956,8 +1069,15 @@ current_ui_lang = st.session_state.get("answer_language", "한국어")
 ui = get_ui_text(current_ui_lang)
 
 with st.sidebar:
-    st.markdown(ui["sidebar_title_1"])
-    st.markdown(ui["sidebar_title_2"])
+    st.markdown("""
+    <div style="margin-bottom:20px;">
+        <div style="font-size:18px;font-weight:900;color:#0E4A84;">🏫 한양대(서울)</div>
+        <div style="font-size:15px;color:#4A5568;">Hanyang Univ. (Seoul)</div>
+
+        <div style="margin-top:14px;font-size:18px;font-weight:900;color:#0E4A84;">학생생활관 챗봇</div>
+        <div style="font-size:15px;color:#4A5568;">Dormitory Chatbot</div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.markdown("---")
     st.subheader(ui["section_user_type"])
@@ -1023,52 +1143,78 @@ with st.sidebar:
     else:
         st.caption(ui["no_stats"])
 
+    st.markdown("---")
+    st.subheader(ui["admin_section"])
+
+    admin_pw_input = st.text_input(
+        ui["admin_password"],
+        type="password"
+    )
+
+    if admin_pw_input:
+        if admin_pw_input == ADMIN_PASSWORD:
+            st.session_state.admin_authenticated = True
+            st.success(ui["admin_success"])
+        else:
+            st.error(ui["admin_error"])
+
+    if st.session_state.admin_authenticated:
+        uploaded_file = st.file_uploader(
+            ui["upload_pdf"],
+            type=["pdf"]
+        )
+
+        if uploaded_file is not None:
+            save_uploaded_pdf(uploaded_file)
+            st.success(f"{ui['upload_success']}: {uploaded_file.name}")
+            st.cache_resource.clear()
+            if os.path.exists(RAG_CACHE_FILE):
+                os.remove(RAG_CACHE_FILE)
+            st.rerun()
+
 # -----------------------------
 # 안내 박스
 # -----------------------------
-if answer_language == "English":
-    guide_html = """
-    <div class="guide-box">
-        <b style="color:#0E4A84;">Guide</b><br>
-        Ask about the dorm application period, result announcement, dorm fee payment,
-        required documents, or contact information, and the chatbot will answer based on
-        the uploaded dormitory guide documents.
-    </div>
-    """
-else:
-    guide_html = """
-    <div class="guide-box">
-        <b style="color:#0E4A84;">안내</b><br>
-        입사신청기간, 합격자 발표, 생활관비 납부, 제출서류, 문의처 등을 질문하면
-        등록된 모집요강 문서를 바탕으로 안내합니다.
-    </div>
-    """
-
-st.markdown(guide_html, unsafe_allow_html=True)
+st.markdown(ui["guide"], unsafe_allow_html=True)
 
 # -----------------------------
 # 상태 표시
 # -----------------------------
 selected_user_type_display = get_category_display_name(selected_user_type, answer_language)
+st.info(f"{ui['status_info_prefix']}: {selected_user_type_display} · {ui['status_lang_prefix']}: {answer_language}")
+st.caption(f"{ui['status_caption']}: {len(all_pages)} · {ui['status_caption2']}: {len(docs)}")
 
-if answer_language == "English":
-    st.info(f"Selected user type: {selected_user_type_display} · Response language: {answer_language}")
-    st.caption(f"Registered PDF pages: {len(all_pages)} · Searchable documents: {len(docs)}")
-else:
-    st.info(f"현재 선택한 사용자 유형: {selected_user_type_display} · 답변 언어: {answer_language}")
-    st.caption(f"등록된 PDF 페이지 수: {len(all_pages)} · 검색용 문서 수: {len(docs)}")
+# -----------------------------
+# 관리자 패널
+# -----------------------------
+if st.session_state.admin_authenticated:
+    st.markdown(ui["admin_panel"])
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.metric(ui["loaded_pages"], len(all_pages))
+    with col_b:
+        st.metric(ui["searchable_docs"], len(docs))
+
+    with st.expander(ui["recent_logs"]):
+        for row in current_logs[-10:][::-1]:
+            st.write(row)
+
+    with st.expander(ui["top_questions_label"]):
+        admin_stats = get_question_stats(current_logs)[:10]
+        if admin_stats:
+            for q, count in admin_stats:
+                st.write(f"• {q} ({count})")
+        else:
+            st.caption("No logs yet." if answer_language == "English" else "아직 로그가 없습니다.")
 
 # -----------------------------
 # FAQ / 빠른 질문
 # -----------------------------
 quick_questions = build_quick_questions(answer_language=answer_language, logs=current_logs)
 
-if answer_language == "English":
-    st.subheader("⭐ Frequently Asked Questions")
-    st.caption("Click a question below to ask instantly. Common questions are updated automatically.")
-else:
-    st.subheader("⭐ 자주 묻는 질문")
-    st.caption("버튼을 누르면 바로 질문할 수 있습니다. 최근 많이 들어온 질문이 자동 반영됩니다.")
+st.subheader(ui["faq_title"])
+st.caption(ui["faq_caption"])
 
 cols = st.columns(3)
 for i, q in enumerate(quick_questions):
@@ -1087,29 +1233,18 @@ for msg in st.session_state.chat_history:
 
         if msg.get("user_type"):
             user_type_display = get_category_display_name(msg["user_type"], msg_lang)
-            if msg_lang == "English":
-                st.caption(f"User type: {user_type_display}")
-            else:
-                st.caption(f"선택 유형: {user_type_display}")
+            st.caption(f"{get_ui_text(msg_lang)['user_type']}: {user_type_display}")
 
         if msg.get("answer_language"):
-            if msg_lang == "English":
-                st.caption(f"Response language: {msg['answer_language']}")
-            else:
-                st.caption(f"답변 언어: {msg['answer_language']}")
+            st.caption(f"{get_ui_text(msg_lang)['response_language']}: {msg['answer_language']}")
 
         if msg.get("sources_text"):
-            if msg_lang == "English":
-                st.caption(f"Sources: {msg['sources_text']}")
-            else:
-                st.caption(f"참고 자료: {msg['sources_text']}")
+            st.caption(f"{get_ui_text(msg_lang)['sources']}: {msg['sources_text']}")
 
 # -----------------------------
 # 질문 입력
 # -----------------------------
-typed_prompt = st.chat_input(
-    "Enter your question" if answer_language == "English" else "질문을 입력하세요"
-)
+typed_prompt = st.chat_input(ui["chat_input"])
 
 prompt = ""
 if st.session_state.pending_question:
@@ -1117,6 +1252,10 @@ if st.session_state.pending_question:
     st.session_state.pending_question = ""
 elif typed_prompt:
     prompt = typed_prompt
+    auto_lang = detect_auto_language(typed_prompt)
+    st.session_state["answer_language"] = auto_lang
+    answer_language = auto_lang
+    ui = get_ui_text(answer_language)
 
 if prompt:
     with st.chat_message("user"):
@@ -1137,9 +1276,9 @@ if prompt:
 
     if not filtered_docs:
         if answer_language == "English":
-            answer = f"No documents were found for the selected category ({selected_user_type_display})."
+            answer = f"{ui['no_docs']} ({selected_user_type_display})."
         else:
-            answer = f"선택한 유형({selected_user_type_display})에 해당하는 문서를 찾지 못했습니다."
+            answer = f"{ui['no_docs']} ({selected_user_type_display})."
 
         with st.chat_message("assistant"):
             st.write(answer)
@@ -1170,7 +1309,7 @@ if prompt:
             if any(k in prompt for k in ["전화", "번호", "연락처", "문의"]):
                 search_question = prompt + " 전화번호 연락처 문의처 행정팀 사감실 02-"
 
-        with st.spinner("Searching relevant pages..." if answer_language == "English" else "관련 페이지 검색 중..."):
+        with st.spinner(ui["search_spinner"]):
             selected_results = retrieve_top_results(
                 question=search_question,
                 docs=filtered_docs,
@@ -1178,7 +1317,7 @@ if prompt:
                 top_k=6
             )
 
-        with st.spinner("Generating answer..." if answer_language == "English" else "답변 생성 중..."):
+        with st.spinner(ui["answer_spinner"]):
             answer, sources_text = ask_gpt(
                 question=prompt,
                 selected_results=selected_results,
@@ -1191,17 +1330,11 @@ if prompt:
             st.markdown(answer)
 
             selected_user_type_display = get_category_display_name(selected_user_type, answer_language)
+            st.caption(f"{ui['user_type']}: {selected_user_type_display}")
+            st.caption(f"{ui['response_language']}: {answer_language}")
+            st.caption(f"{ui['sources']}: {sources_text}")
 
-            if answer_language == "English":
-                st.caption(f"User type: {selected_user_type_display}")
-                st.caption(f"Response language: {answer_language}")
-                st.caption(f"Sources: {sources_text}")
-            else:
-                st.caption(f"선택 유형: {selected_user_type_display}")
-                st.caption(f"답변 언어: {answer_language}")
-                st.caption(f"참고 자료: {sources_text}")
-
-            with st.expander("View referenced files/pages" if answer_language == "English" else "참고한 파일/페이지 보기"):
+            with st.expander(ui["expander"]):
                 for item in selected_results:
                     page_info = find_page_info(
                         item["source_file"],
@@ -1228,7 +1361,12 @@ if prompt:
                             use_container_width=True
                         )
                         if page_info["text"]:
-                            st.text(page_info["text"][:2000])
+                            st.text_area(
+                                ui["extract_text"],
+                                value=page_info["text"][:2000],
+                                height=220,
+                                key=f"text_{item['source_file']}_{item['page_num']}_{item['doc_type']}"
+                            )
 
                     st.markdown("---")
 
