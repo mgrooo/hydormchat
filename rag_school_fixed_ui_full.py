@@ -128,10 +128,11 @@ client = OpenAI(api_key=api_key)
 st.markdown("""
 <style>
 .block-container {
-    padding-top: 2rem;
+    padding-top: 1.4rem;
     padding-bottom: 2rem;
 }
 
+/* 기본 버튼 */
 .stButton > button {
     background-color: #0E4A84;
     color: white;
@@ -146,24 +147,23 @@ st.markdown("""
     color: white;
 }
 
+/* select / alert */
 div[data-baseweb="select"] > div {
     border-radius: 10px;
 }
-
 div[data-testid="stAlert"] {
     border-radius: 12px;
 }
 
+/* expander / sidebar */
 .streamlit-expanderHeader {
     font-weight: 700;
     color: #0E4A84;
 }
-
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
     color: #0E4A84;
 }
-
 section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     background: #F7FAFC;
     padding: 10px;
@@ -172,22 +172,122 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     margin-bottom: 8px;
 }
 
-.banner-box {
+/* 상단 배너 */
+.banner-card {
     background: linear-gradient(90deg, #0E4A84 0%, #1B6BB8 100%);
-    padding: 22px;
+    padding: 22px 24px;
     border-radius: 18px;
     margin-bottom: 14px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
-
-.guide-box {
-    background: #F7FAFC;
-    border: 1px solid #D9E6F2;
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 18px;
+.banner-title {
+    font-size: 2.1rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: #FFFFFF;
+    line-height: 1.25;
+    margin-bottom: 8px;
+}
+.banner-subtitle {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: #EAF3FF;
+    line-height: 1.5;
 }
 
+/* 사용법 박스 */
+.guide-box {
+    background: #FFF6D8;
+    border: 2px solid #D9A400;
+    border-radius: 18px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+    font-size: 18px;
+    line-height: 1.8;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+}
+.guide-title {
+    font-weight: 900;
+    color: #8A5A00;
+    margin-bottom: 10px;
+    font-size: 1.28rem;
+}
+.required-badge {
+    background: #D62828;
+    color: white;
+    font-size: 0.9rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+.guide-main {
+    font-weight: 800;
+    color: #1F3A5F;
+    margin-bottom: 8px;
+}
+.guide-note {
+    background: #FFFDF4;
+    border: 1.5px solid #E7C96B;
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #6B4E00;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.guide-warning {
+    background: #FFF3F3;
+    border: 1.5px solid #E09A9A;
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #8B2E2E;
+    font-size: 0.98rem;
+    font-weight: 700;
+}
+
+/* 사이드바 카드 */
+.sidebar-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 16px 14px;
+    text-align: center;
+    margin-bottom: 18px;
+}
+.sidebar-ko {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #0E4A84;
+    margin-top: 6px;
+}
+.sidebar-en {
+    font-size: 0.96rem;
+    color: #4A5568;
+    margin-top: 2px;
+}
+.fake-disabled {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    background: #D1D5DB;
+    color: #6B7280;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-weight: 700;
+    margin-top: 10px;
+    cursor: not-allowed;
+    user-select: none;
+    pointer-events: none;
+}
+.small-note {
+    font-size: 0.88rem;
+    color: #6B7280;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+/* 채팅 박스 */
 div[data-testid="stChatMessage"] {
     border-radius: 16px;
     padding: 6px 8px;
@@ -200,7 +300,6 @@ div[data-testid="stChatMessage"] {
 # -----------------------------
 logo_path = "hanyang_logo.png"
 
-st.markdown('<div class="banner-box">', unsafe_allow_html=True)
 col1, col2 = st.columns([1.2, 8])
 
 with col1:
@@ -208,108 +307,45 @@ with col1:
         st.image(logo_path, width=90)
     else:
         st.markdown(
-            "<div style='font-size:58px; color:white; text-align:center;'>🏫</div>",
+            "<div style='font-size:58px; text-align:center;'>🏫</div>",
             unsafe_allow_html=True
         )
 
 with col2:
     st.markdown("""
-    <div style="padding-top:6px;">
-        <div style="
-            font-size:2.3rem;
-            font-weight:900;
-            letter-spacing:-0.5px;
-            color:#123B6D;
-            line-height:1.25;
-            margin-bottom:8px;
-        ">
-            한양대(서울) 학생생활관 챗봇
-        </div>
-
-        <div style="
-            font-size:1.08rem;
-            font-weight:700;
-            color:#4B5563;
-            line-height:1.45;
-        ">
-            학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.
+    <div class="banner-card">
+        <div class="banner-title">한양대(서울) 학생생활관 챗봇</div>
+        <div class="banner-subtitle">
+            학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
+            Answers are based on the dormitory recruitment guidelines and official documents.
         </div>
     </div>
     """, unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
 
 # -----------------------------
 # 상단 사용법 안내
 # -----------------------------
 st.markdown("""
-<div style="
-background:#FFF6D8;
-border:2px solid #D9A400;
-border-radius:18px;
-padding:18px 20px;
-margin-bottom:22px;
-font-size:18px;
-line-height:1.8;
-box-shadow:0 3px 10px rgba(0,0,0,0.06);
-">
-    <div style="
-        font-weight:900;
-        color:#8A5A00;
-        margin-bottom:10px;
-        font-size:1.28rem;
-    ">
+<div class="guide-box">
+    <div class="guide-title">
         📌 사용법 / How to Use
-        <span style="
-            background:#D62828;
-            color:white;
-            font-size:0.9rem;
-            padding:4px 10px;
-            border-radius:999px;
-            margin-left:8px;
-            vertical-align:middle;
-        ">필수 / Required</span>
+        <span class="required-badge">필수 / Required</span>
     </div>
 
-    <div style="
-        font-weight:800;
-        color:#1F3A5F;
-        margin-bottom:8px;
-    ">
+    <div class="guide-main">
         사용법 : (1) 사용언어 선택(한국어, 영어) (2) 사용자유형 선택 (3) 질문 입력
     </div>
 
-    <div style="
-        font-weight:800;
-        color:#1F3A5F;
-        margin-bottom:14px;
-    ">
+    <div class="guide-main">
         How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
     </div>
 
-    <div style="
-        background:#FFFDF4;
-        border:1.5px solid #E7C96B;
-        border-radius:12px;
-        padding:12px 14px;
-        color:#6B4E00;
-        font-size:1rem;
-        font-weight:700;
-        margin-bottom:10px;
-    ">
+    <div class="guide-note">
         ※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.<br>
         ※ Following these steps is required for more accurate answers.
     </div>
 
-    <div style="
-        background:#FFF3F3;
-        border:1.5px solid #E09A9A;
-        border-radius:12px;
-        padding:12px 14px;
-        color:#8B2E2E;
-        font-size:0.98rem;
-        font-weight:700;
-    ">
+    <div class="guide-warning">
         ⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.<br>
         ⚠ For important matters, please always compare and confirm with the original PDF as well.
     </div>
@@ -769,7 +805,13 @@ def get_ui_text(lang="한국어"):
             "faq_title": "⭐ Frequently Asked Questions",
             "faq_caption": "Click a question below to ask instantly. Common questions are updated automatically.",
             "guide": """
-            <div class="guide-box">
+            <div style="
+                background:#F7FAFC;
+                border:1px solid #D9E6F2;
+                border-radius:14px;
+                padding:14px 16px;
+                margin-bottom:18px;
+            ">
                 <b style="color:#0E4A84;">Guide</b><br>
                 Ask about the dorm application period, result announcement, dorm fee payment,
                 required documents, or contact information, and the chatbot will answer based on
@@ -819,7 +861,13 @@ def get_ui_text(lang="한국어"):
         "faq_title": "⭐ 자주 묻는 질문",
         "faq_caption": "버튼을 누르면 바로 질문할 수 있습니다. 최근 많이 들어온 질문이 자동 반영됩니다.",
         "guide": """
-        <div class="guide-box">
+        <div style="
+            background:#F7FAFC;
+            border:1px solid #D9E6F2;
+            border-radius:14px;
+            padding:14px 16px;
+            margin-bottom:18px;
+        ">
             <b style="color:#0E4A84;">안내</b><br>
             입사신청기간, 합격자 발표, 생활관비 납부, 제출서류, 문의처 등을 질문하면
             등록된 모집요강 문서를 바탕으로 안내합니다.
@@ -1110,26 +1158,15 @@ current_ui_lang = st.session_state.get("answer_language", "한국어")
 ui = get_ui_text(current_ui_lang)
 
 with st.sidebar:
-    st.markdown(
-        """
-        <div style="margin-bottom:20px;">
-            <div style="font-size:18px; font-weight:900; color:#0E4A84;">
-                🏫 한양대(서울)
-            </div>
-            <div style="font-size:15px; color:#4A5568;">
-                Hanyang Univ. (Seoul)
-            </div>
-
-            <div style="margin-top:14px; font-size:18px; font-weight:900; color:#0E4A84;">
-                학생생활관 챗봇
-            </div>
-            <div style="font-size:15px; color:#4A5568;">
-                Dormitory Chatbot
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.markdown("""
+    <div class="sidebar-card">
+        <div style="font-size:48px;">🏫</div>
+        <div class="sidebar-ko">한양대(서울)</div>
+        <div class="sidebar-en">Hanyang Univ. (Seoul)</div>
+        <div class="sidebar-ko" style="margin-top:14px;">학생생활관 챗봇</div>
+        <div class="sidebar-en">Dormitory Chatbot</div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.markdown("---")
     st.subheader(ui["section_user_type"])
@@ -1153,6 +1190,15 @@ with st.sidebar:
 
     selected_user_type_display = get_category_display_name(selected_user_type, answer_language)
     st.caption(f"{ui['caption_current']}: {selected_user_type_display} · {answer_language}")
+
+    st.markdown(
+        '<div class="fake-disabled">일반 사용자는 편집할 수 없습니다 / Editing disabled</div>',
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        '<div class="small-note">위 설정을 정확히 선택하면 답변 정확도가 높아질 수 있습니다.</div>',
+        unsafe_allow_html=True
+    )
 
     st.markdown("---")
     st.subheader(ui["section_tools"])
