@@ -98,7 +98,7 @@ ENGLISH_SEARCH_MAP = {
     "How can I contact the dormitory office?": "문의 전화번호 연락처 문의처 행정팀 사감실 02-"
 }
 
-ADMIN_PASSWORD = st.secrets.get("ADMIN_PASSWORD", "1234")
+ADMIN_PASSWORD = "1234"
 
 # -----------------------------
 # 환경 변수 / API
@@ -114,6 +114,11 @@ if not api_key:
 
 if not api_key:
     raise ValueError("OPENAI_API_KEY가 없습니다. Streamlit Secrets 또는 .env를 확인하세요.")
+
+try:
+    ADMIN_PASSWORD = st.secrets.get("ADMIN_PASSWORD", ADMIN_PASSWORD)
+except Exception:
+    pass
 
 client = OpenAI(api_key=api_key)
 
@@ -209,11 +214,24 @@ with col1:
 
 with col2:
     st.markdown("""
-    <div style="color:white; padding-top:4px;">
-        <div style="font-size:2.1rem; font-weight:800; letter-spacing:-0.3px;">
+    <div style="padding-top:6px;">
+        <div style="
+            font-size:2.3rem;
+            font-weight:900;
+            letter-spacing:-0.5px;
+            color:#123B6D;
+            line-height:1.25;
+            margin-bottom:8px;
+        ">
             한양대(서울) 학생생활관 챗봇
         </div>
-        <div style="margin-top:6px; font-size:1rem; opacity:0.92;">
+
+        <div style="
+            font-size:1.08rem;
+            font-weight:700;
+            color:#4B5563;
+            line-height:1.45;
+        ">
             학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.
         </div>
     </div>
@@ -226,26 +244,75 @@ st.markdown('</div>', unsafe_allow_html=True)
 # -----------------------------
 st.markdown("""
 <div style="
-background:#FFF4CC;
-border:2px solid #E0B100;
-border-radius:14px;
-padding:16px 18px;
-margin-bottom:20px;
+background:#FFF6D8;
+border:2px solid #D9A400;
+border-radius:18px;
+padding:18px 20px;
+margin-bottom:22px;
 font-size:18px;
-line-height:1.7;
-box-shadow:0 2px 8px rgba(0,0,0,0.06);
+line-height:1.8;
+box-shadow:0 3px 10px rgba(0,0,0,0.06);
 ">
-<div style="font-weight:900; color:#8A5A00; margin-bottom:8px;">
-📌 사용법 / How to Use
-</div>
+    <div style="
+        font-weight:900;
+        color:#8A5A00;
+        margin-bottom:10px;
+        font-size:1.28rem;
+    ">
+        📌 사용법 / How to Use
+        <span style="
+            background:#D62828;
+            color:white;
+            font-size:0.9rem;
+            padding:4px 10px;
+            border-radius:999px;
+            margin-left:8px;
+            vertical-align:middle;
+        ">필수 / Required</span>
+    </div>
 
-<div style="font-weight:700;">
-사용법 : (1) 사용언어 선택(한국어, 영어) (2) 사용자유형 선택 (3) 질문 입력
-</div>
+    <div style="
+        font-weight:800;
+        color:#1F3A5F;
+        margin-bottom:8px;
+    ">
+        사용법 : (1) 사용언어 선택(한국어, 영어) (2) 사용자유형 선택 (3) 질문 입력
+    </div>
 
-<div style="margin-top:6px; font-weight:700;">
-How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
-</div>
+    <div style="
+        font-weight:800;
+        color:#1F3A5F;
+        margin-bottom:14px;
+    ">
+        How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
+    </div>
+
+    <div style="
+        background:#FFFDF4;
+        border:1.5px solid #E7C96B;
+        border-radius:12px;
+        padding:12px 14px;
+        color:#6B4E00;
+        font-size:1rem;
+        font-weight:700;
+        margin-bottom:10px;
+    ">
+        ※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.<br>
+        ※ Following these steps is required for more accurate answers.
+    </div>
+
+    <div style="
+        background:#FFF3F3;
+        border:1.5px solid #E09A9A;
+        border-radius:12px;
+        padding:12px 14px;
+        color:#8B2E2E;
+        font-size:0.98rem;
+        font-weight:700;
+    ">
+        ⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.<br>
+        ⚠ For important matters, please always compare and confirm with the original PDF as well.
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -334,25 +401,18 @@ def infer_fixed_category(filename: str, first_page_text: str = "") -> str:
 
     if "외국인" in text or "international" in text or "non korean" in text:
         return "외국인 재학생"
-
     if "학부 재학생" in text:
         return "학부 재학생"
-
     if "대학원" in text or "일반대학원" in text or "전문대학원" in text:
         return "대학원"
-
     if "학부 신입생" in text and ("수시" in text or "재외국민" in text):
         return "학부 신입생(수시/재외국민)"
-
     if "학부 신입생" in text and "정시" in text:
         return "학부 신입생(정시)"
-
     if "정시" in text:
         return "학부 신입생(정시)"
-
     if "수시" in text or "재외국민" in text:
         return "학부 신입생(수시/재외국민)"
-
     return "기타"
 
 
@@ -438,12 +498,7 @@ def expand_query(query: str):
     q = query.strip()
 
     if "입사신청기간" in q or ("신청" in q and "기간" in q):
-        expanded.extend([
-            "인터넷 입사신청",
-            "입사 신청 기간",
-            "신청 일정",
-            "모집일정"
-        ])
+        expanded.extend(["인터넷 입사신청", "입사 신청 기간", "신청 일정", "모집일정"])
 
     if "입사절차" in q or ("입사" in q and "절차" in q):
         expanded.extend([
@@ -457,22 +512,10 @@ def expand_query(query: str):
         ])
 
     if "서류" in q:
-        expanded.extend([
-            "증빙서류",
-            "제출서류",
-            "준비물",
-            "입사원서",
-            "결핵검진결과표"
-        ])
+        expanded.extend(["증빙서류", "제출서류", "준비물", "입사원서", "결핵검진결과표"])
 
     if "일정" in q:
-        expanded.extend([
-            "모집일정",
-            "신청기간",
-            "합격자 발표",
-            "납부기간",
-            "입사개시일"
-        ])
+        expanded.extend(["모집일정", "신청기간", "합격자 발표", "납부기간", "입사개시일"])
 
     if "전화" in q or "번호" in q or "연락처" in q or "문의" in q:
         expanded.extend([
@@ -949,7 +992,6 @@ def get_auto_faq_questions(limit=9, min_count=2, answer_language="한국어", lo
     for q, count in stats:
         if count < min_count:
             continue
-
         if answer_language == "English":
             if is_english_text(q):
                 filtered.append(q)
@@ -1059,7 +1101,6 @@ if "answer_language" not in st.session_state:
 if "admin_authenticated" not in st.session_state:
     st.session_state.admin_authenticated = False
 
-# 현재 화면에서 재사용할 로그
 current_logs = read_question_logs()
 
 # -----------------------------
@@ -1069,15 +1110,26 @@ current_ui_lang = st.session_state.get("answer_language", "한국어")
 ui = get_ui_text(current_ui_lang)
 
 with st.sidebar:
-    st.markdown("""
-    <div style="margin-bottom:20px;">
-        <div style="font-size:18px;font-weight:900;color:#0E4A84;">🏫 한양대(서울)</div>
-        <div style="font-size:15px;color:#4A5568;">Hanyang Univ. (Seoul)</div>
+    st.markdown(
+        """
+        <div style="margin-bottom:20px;">
+            <div style="font-size:18px; font-weight:900; color:#0E4A84;">
+                🏫 한양대(서울)
+            </div>
+            <div style="font-size:15px; color:#4A5568;">
+                Hanyang Univ. (Seoul)
+            </div>
 
-        <div style="margin-top:14px;font-size:18px;font-weight:900;color:#0E4A84;">학생생활관 챗봇</div>
-        <div style="font-size:15px;color:#4A5568;">Dormitory Chatbot</div>
-    </div>
-    """, unsafe_allow_html=True)
+            <div style="margin-top:14px; font-size:18px; font-weight:900; color:#0E4A84;">
+                학생생활관 챗봇
+            </div>
+            <div style="font-size:15px; color:#4A5568;">
+                Dormitory Chatbot
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.markdown("---")
     st.subheader(ui["section_user_type"])
@@ -1088,12 +1140,6 @@ with st.sidebar:
         format_func=lambda x: get_category_display_name(x, current_ui_lang),
         help=ui["help_user_type"]
     )
-
-    default_language = "English" if selected_user_type == "외국인 재학생" else "한국어"
-
-    if "answer_language_initialized" not in st.session_state:
-        st.session_state["answer_language"] = default_language
-        st.session_state["answer_language_initialized"] = True
 
     answer_language = st.radio(
         ui["label_language"],
@@ -1111,11 +1157,14 @@ with st.sidebar:
     st.markdown("---")
     st.subheader(ui["section_tools"])
 
-    if st.button(ui["reload_button"], use_container_width=True):
-        st.cache_resource.clear()
-        if os.path.exists(RAG_CACHE_FILE):
-            os.remove(RAG_CACHE_FILE)
-        st.rerun()
+    is_admin = st.session_state.admin_authenticated
+
+    if is_admin:
+        if st.button(ui["reload_button"], use_container_width=True):
+            st.cache_resource.clear()
+            if os.path.exists(RAG_CACHE_FILE):
+                os.remove(RAG_CACHE_FILE)
+            st.rerun()
 
     st.metric(ui["metric_total"], len(current_logs))
     st.metric(ui["metric_cache"], ui["cache_yes"] if cache_hit else ui["cache_no"])
@@ -1138,6 +1187,7 @@ with st.sidebar:
                 if stat_q == q:
                     sidebar_counter[q] = count
                     break
+
         for q, count in list(sidebar_counter.items())[:10]:
             st.write(f"• {q} ({count})")
     else:
@@ -1230,16 +1280,17 @@ for msg in st.session_state.chat_history:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
         msg_lang = msg.get("answer_language", "한국어")
+        msg_ui = get_ui_text(msg_lang)
 
         if msg.get("user_type"):
             user_type_display = get_category_display_name(msg["user_type"], msg_lang)
-            st.caption(f"{get_ui_text(msg_lang)['user_type']}: {user_type_display}")
+            st.caption(f"{msg_ui['user_type']}: {user_type_display}")
 
         if msg.get("answer_language"):
-            st.caption(f"{get_ui_text(msg_lang)['response_language']}: {msg['answer_language']}")
+            st.caption(f"{msg_ui['response_language']}: {msg['answer_language']}")
 
         if msg.get("sources_text"):
-            st.caption(f"{get_ui_text(msg_lang)['sources']}: {msg['sources_text']}")
+            st.caption(f"{msg_ui['sources']}: {msg['sources_text']}")
 
 # -----------------------------
 # 질문 입력
@@ -1274,11 +1325,10 @@ if prompt:
         selected_user_type
     )
 
+    selected_user_type_display = get_category_display_name(selected_user_type, answer_language)
+
     if not filtered_docs:
-        if answer_language == "English":
-            answer = f"{ui['no_docs']} ({selected_user_type_display})."
-        else:
-            answer = f"{ui['no_docs']} ({selected_user_type_display})."
+        answer = f"{ui['no_docs']} ({selected_user_type_display})."
 
         with st.chat_message("assistant"):
             st.write(answer)
@@ -1305,6 +1355,18 @@ if prompt:
                 search_question = ENGLISH_SEARCH_MAP[prompt]
             elif any(k in prompt.lower() for k in ["phone", "contact", "inquiry", "number"]):
                 search_question = prompt + " 문의 전화번호 연락처 문의처 행정팀 사감실 02-"
+            else:
+                lowered = prompt.lower()
+                if "application" in lowered or "apply" in lowered:
+                    search_question = prompt + " 입사신청 신청기간 모집일정"
+                elif "result" in lowered or "announcement" in lowered:
+                    search_question = prompt + " 합격자 발표 발표일정"
+                elif "payment" in lowered or "fee" in lowered:
+                    search_question = prompt + " 생활관비 납부기간 납부일정"
+                elif "document" in lowered or "required" in lowered:
+                    search_question = prompt + " 제출서류 증빙서류 준비물"
+                elif "move in" in lowered or "check in" in lowered:
+                    search_question = prompt + " 입사등록 준비물 결핵검진결과표"
         else:
             if any(k in prompt for k in ["전화", "번호", "연락처", "문의"]):
                 search_question = prompt + " 전화번호 연락처 문의처 행정팀 사감실 02-"
@@ -1328,8 +1390,6 @@ if prompt:
 
         with st.chat_message("assistant"):
             st.markdown(answer)
-
-            selected_user_type_display = get_category_display_name(selected_user_type, answer_language)
             st.caption(f"{ui['user_type']}: {selected_user_type_display}")
             st.caption(f"{ui['response_language']}: {answer_language}")
             st.caption(f"{ui['sources']}: {sources_text}")
