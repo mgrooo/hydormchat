@@ -91,7 +91,7 @@ gap:20px;
 
 </div>
 """, unsafe_allow_html=True)
-
+st.info("💬 생활관 모집요강, 입사신청, 제출서류, 문의처 등을 질문하면 문서를 기반으로 답변합니다.")
 # -----------------------------
 # 유틸 함수
 # -----------------------------
@@ -908,6 +908,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
