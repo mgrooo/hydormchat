@@ -532,22 +532,20 @@ def get_gspread_client():
 
 def get_log_worksheet():
     gc = get_gspread_client()
-
-    if "GOOGLE_SHEET_NAME" not in st.secrets:
-        raise ValueError("secrets.toml에 GOOGLE_SHEET_NAME 이 없습니다.")
-
     sheet_name = st.secrets["GOOGLE_SHEET_NAME"]
-    st.write("읽은 시트 이름:", sheet_name)
 
     sh = gc.open(sheet_name)
-    st.write("연결된 스프레드시트 제목:", sh.title)
 
-    return sh.sheet1
+    # 첫 번째 워크시트 사용
+    ws = sh.get_worksheet(0)
+
+    return ws
 
 
 def append_google_sheet_log(question, selected_user_type, sources_text="", answer_preview=""):
     try:
         ws = get_log_worksheet()
+
         ws.append_row([
             datetime.now().isoformat(timespec="seconds"),
             question,
@@ -555,12 +553,11 @@ def append_google_sheet_log(question, selected_user_type, sources_text="", answe
             sources_text,
             answer_preview[:200]
         ])
+
         st.success("Google Sheets 로그 저장 성공")
-        return True
 
     except Exception as e:
         st.error(f"Google Sheets 로그 저장 실패: {e}")
-        return False
 
 def read_google_sheet_logs():
     try:
@@ -864,5 +861,6 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
