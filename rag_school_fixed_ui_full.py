@@ -530,8 +530,7 @@ def get_gspread_client():
         scopes=scopes
     )
 
-    return gspread.authorize(credentials)
-
+    return gspread.Client(auth=credentials)
 
 def get_log_worksheet():
     gc = get_gspread_client()
@@ -868,3 +867,4 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
