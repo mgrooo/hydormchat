@@ -4,7 +4,6 @@ import json
 import pickle
 import hashlib
 import base64
-import textwrap
 import tempfile
 from datetime import datetime
 
@@ -327,33 +326,32 @@ with col2:
 # 상단 사용법 안내
 # -----------------------------
 
+st.markdown("""
+<div class="guide-box">
+<div class="guide-title">
+📌 사용법 / How to Use
+<span class="required-badge">필수 / Required</span>
+</div>
 
-st.markdown(textwrap.dedent("""\
-    <div class="guide-box">
-        <div class="guide-title">
-            📌 사용법 / How to Use
-            <span class="required-badge">필수 / Required</span>
-        </div>
+<div class="guide-main">
+사용법 : (1) 사용언어 선택(한국어, 영어) (2) 사용자유형 선택 (3) 질문 입력
+</div>
 
-        <div class="guide-main">
-            사용법 : (1) 사용언어 선택(한국어, 영어) (2) 사용자유형 선택 (3) 질문 입력
-        </div>
+<div class="guide-main">
+How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
+</div>
 
-        <div class="guide-main">
-            How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
-        </div>
+<div class="guide-note">
+※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.<br>
+※ Following these steps is required for more accurate answers.
+</div>
 
-        <div class="guide-note">
-            ※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.<br>
-            ※ Following these steps is required for more accurate answers.
-        </div>
-
-        <div class="guide-warning">
-            ⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.<br>
-            ⚠ For important matters, please always compare and confirm with the original PDF as well.
-        </div>
-    </div>
-    """), unsafe_allow_html=True)
+<div class="guide-warning">
+⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.<br>
+⚠ For important matters, please always compare and confirm with the original PDF as well.
+</div>
+</div>
+""", unsafe_allow_html=True)
 # -----------------------------
 # 유틸 함수
 # -----------------------------
@@ -1492,5 +1490,6 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
