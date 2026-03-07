@@ -1427,7 +1427,6 @@ if st.session_state.pending_question:
 elif typed_prompt:
     prompt = typed_prompt
     auto_lang = detect_auto_language(typed_prompt)
-    st.session_state["answer_language"] = auto_lang
     answer_language = auto_lang
     ui = get_ui_text(answer_language)
 
@@ -1567,6 +1566,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
