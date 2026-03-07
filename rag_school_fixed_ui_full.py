@@ -59,9 +59,38 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
-st.set_page_config(page_title="학교 문서 챗봇", page_icon="📚")
-st.title("📚 학교 문서 챗봇")
-st.caption("서버에 등록된 PDF를 자동으로 읽어 답변합니다.")
+st.set_page_config(
+    page_title="한양대(서울) 학생생활관 챗봇",
+    page_icon="🏫",
+    layout="wide"
+)
+
+st.markdown("""
+<div style="
+background: linear-gradient(90deg,#0b3c82,#1f5bb5);
+padding:22px;
+border-radius:14px;
+margin-bottom:25px;
+color:white;
+display:flex;
+align-items:center;
+gap:20px;
+">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Hanyang_University_logo.svg/120px-Hanyang_University_logo.svg.png" width="70">
+
+<div>
+<div style="font-size:34px;font-weight:700;">
+한양대(서울) 학생생활관 챗봇
+</div>
+
+<div style="font-size:16px;opacity:0.9;margin-top:4px;">
+학생생활관 모집요강 및 생활관 안내문서를 기반으로 답변합니다
+</div>
+</div>
+
+</div>
+""", unsafe_allow_html=True)
 
 # -----------------------------
 # 유틸 함수
@@ -879,6 +908,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
