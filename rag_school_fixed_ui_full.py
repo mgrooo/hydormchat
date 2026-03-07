@@ -1081,7 +1081,7 @@ def build_quick_questions(answer_language="한국어", logs=None):
             seen.add(nq)
             deduped.append(q)
 
-    return deduped[:9]
+    return deduped[:6]
 
 # -----------------------------
 # 캐시 저장 / 불러오기
@@ -1152,49 +1152,92 @@ if "admin_authenticated" not in st.session_state:
 current_logs = read_question_logs()
 
 # -----------------------------
-# 사이드바
+# 본문 상단 사용자 설정 (모바일 우선)
 # -----------------------------
 current_ui_lang = st.session_state.get("answer_language", "한국어")
 ui = get_ui_text(current_ui_lang)
 
+st.markdown("""
+<div style="
+background:#F7FAFC;
+border:1px solid #D9E6F2;
+border-radius:16px;
+padding:16px 18px;
+margin-bottom:18px;
+">
+<div style="
+font-size:1.08rem;
+font-weight:800;
+color:#0E4A84;
+margin-bottom:8px;
+">
+사용자 설정 / User Settings
+</div>
+
+<div style="
+font-size:0.95rem;
+color:#4B5563;
+line-height:1.6;
+">
+먼저 아래 항목을 선택해 주세요.<br>
+Please select the options below first.
+</div>
+</div>
+""", unsafe_allow_html=True)
+
+selected_user_type = st.selectbox(
+    "사용자 유형 선택 / Select User Type",
+    FIXED_CATEGORIES,
+    format_func=lambda x: get_category_display_name(x, current_ui_lang),
+    key="selected_user_type_main"
+)
+
+answer_language = st.selectbox(
+    "답변 언어 / Response Language",
+    ["한국어", "English"],
+    index=0 if current_ui_lang == "한국어" else 1,
+    key="answer_language"
+)
+
+ui = get_ui_text(answer_language)
+
+# -----------------------------
+# 사이드바
+# -----------------------------
 with st.sidebar:
+
     st.markdown("""
     <div class="sidebar-card">
-        <div style="font-size:48px;">🏫</div>
-        <div class="sidebar-ko">한양대(서울)</div>
-        <div class="sidebar-en">Hanyang Univ. (Seoul)</div>
-        <div class="sidebar-ko" style="margin-top:14px;">학생생활관 챗봇</div>
-        <div class="sidebar-en">Dormitory Chatbot</div>
+    <div style="font-size:48px;">🏫</div>
+    <div class="sidebar-ko">한양대(서울)</div>
+    <div class="sidebar-en">Hanyang Univ. (Seoul)</div>
+
+    <div class="sidebar-ko" style="margin-top:14px;">
+    학생생활관 챗봇
+    </div>
+
+    <div class="sidebar-en">
+    Dormitory Chatbot
+    </div>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("---")
-    st.subheader(ui["section_user_type"])
 
-    selected_user_type = st.selectbox(
-        ui["label_user_type"],
-        FIXED_CATEGORIES,
-        format_func=lambda x: get_category_display_name(x, current_ui_lang),
-        help=ui["help_user_type"]
+    st.subheader("현재 선택 / Current Selection")
+
+    selected_user_type_display = get_category_display_name(
+        selected_user_type,
+        answer_language
     )
 
-    answer_language = st.radio(
-        ui["label_language"],
-        ["한국어", "English"],
-        horizontal=True,
-        key="answer_language"
-    )
-
-    if answer_language != current_ui_lang:
-        st.rerun()
-
-    selected_user_type_display = get_category_display_name(selected_user_type, answer_language)
-    st.caption(f"{ui['caption_current']}: {selected_user_type_display} · {answer_language}")
+    st.caption(f"{selected_user_type_display} · {answer_language}")
 
     st.markdown(
         '<div class="fake-disabled">일반 사용자는 편집할 수 없습니다 / Editing disabled</div>',
         unsafe_allow_html=True
     )
+
     st.markdown(
         '<div class="small-note">위 설정을 정확히 선택하면 답변 정확도가 높아질 수 있습니다.</div>',
         unsafe_allow_html=True
@@ -1207,9 +1250,12 @@ with st.sidebar:
 
     if is_admin:
         if st.button(ui["reload_button"], use_container_width=True):
+
             st.cache_resource.clear()
+
             if os.path.exists(RAG_CACHE_FILE):
                 os.remove(RAG_CACHE_FILE)
+
             st.rerun()
 
     st.metric(ui["metric_total"], len(current_logs))
@@ -1226,8 +1272,10 @@ with st.sidebar:
     )
 
     if sidebar_stats:
+
         sidebar_counter = {}
         all_stats = get_question_stats(current_logs)
+
         for q in sidebar_stats:
             for stat_q, count in all_stats:
                 if stat_q == q:
@@ -1236,6 +1284,7 @@ with st.sidebar:
 
         for q, count in list(sidebar_counter.items())[:10]:
             st.write(f"• {q} ({count})")
+
     else:
         st.caption(ui["no_stats"])
 
@@ -1248,24 +1297,55 @@ with st.sidebar:
     )
 
     if admin_pw_input:
+
         if admin_pw_input == ADMIN_PASSWORD:
             st.session_state.admin_authenticated = True
             st.success(ui["admin_success"])
+
         else:
             st.error(ui["admin_error"])
 
     if st.session_state.admin_authenticated:
+
         uploaded_file = st.file_uploader(
             ui["upload_pdf"],
             type=["pdf"]
         )
 
         if uploaded_file is not None:
+
             save_uploaded_pdf(uploaded_file)
+
             st.success(f"{ui['upload_success']}: {uploaded_file.name}")
+
             st.cache_resource.clear()
+
             if os.path.exists(RAG_CACHE_FILE):
                 os.remove(RAG_CACHE_FILE)
+
+            st.rerun()
+
+
+# -----------------------------
+# FAQ 버튼 (모바일 2열)
+# -----------------------------
+quick_questions = build_quick_questions(
+    answer_language=answer_language,
+    logs=current_logs
+)
+
+st.subheader(ui["faq_title"])
+st.caption(ui["faq_caption"])
+
+cols = st.columns(2)
+
+for i, q in enumerate(quick_questions):
+
+    with cols[i % 2]:
+
+        if st.button(q, key=f"quick_{i}", use_container_width=True):
+
+            st.session_state.pending_question = q
             st.rerun()
 
 # -----------------------------
@@ -1490,6 +1570,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
