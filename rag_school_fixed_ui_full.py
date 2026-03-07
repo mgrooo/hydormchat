@@ -59,83 +59,33 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
-st.set_page_config(
-    page_title="한양대(서울) 학생생활관 챗봇",
-    page_icon="🏫",
-    layout="wide"
-)
+logo_path = "hanyang_logo.png"
 
-st.markdown("""
-<style>
-.block-container {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-}
+st.markdown('<div class="banner-box">', unsafe_allow_html=True)
+col1, col2 = st.columns([1.2, 8])
 
-.stButton > button {
-    background-color: #0E4A84;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 0.55rem 1rem;
-    font-weight: 600;
-    width: 100%;
-}
-.stButton > button:hover {
-    background-color: #1B6BB8;
-    color: white;
-}
+with col1:
+    if os.path.exists(logo_path):
+        st.image(logo_path, width=90)
+    else:
+        st.markdown(
+            "<div style='font-size:58px; color:white; text-align:center;'>🏫</div>",
+            unsafe_allow_html=True
+        )
 
-div[data-baseweb="select"] > div {
-    border-radius: 10px;
-}
-
-div[data-testid="stAlert"] {
-    border-radius: 12px;
-}
-
-.streamlit-expanderHeader {
-    font-weight: 700;
-    color: #0E4A84;
-}
-
-section[data-testid="stSidebar"] h2,
-section[data-testid="stSidebar"] h3 {
-    color: #0E4A84;
-}
-
-section[data-testid="stSidebar"] div[data-testid="stMetric"] {
-    background: #F7FAFC;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px solid #D9E6F2;
-    margin-bottom: 8px;
-}
-</style>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<div style="
-background: linear-gradient(90deg, #0E4A84 0%, #1B6BB8 100%);
-padding: 24px 28px;
-border-radius: 18px;
-margin-bottom: 14px;
-box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-color: white;
-">
-    <div style="display:flex; align-items:center; gap:18px;">
-        <div style="font-size:54px; line-height:1;">🏫</div>
-        <div>
-            <div style="font-size:2.1rem; font-weight:800; letter-spacing:-0.3px;">
-                한양대(서울) 학생생활관 챗봇
-            </div>
-            <div style="margin-top:6px; font-size:1rem; opacity:0.92;">
-                학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.
-            </div>
+with col2:
+    st.markdown("""
+    <div style="color:white; padding-top:4px;">
+        <div style="font-size:2.1rem; font-weight:800; letter-spacing:-0.3px;">
+            한양대(서울) 학생생활관 챗봇
+        </div>
+        <div style="margin-top:6px; font-size:1rem; opacity:0.92;">
+            학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.
         </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("""
 <div style="
@@ -973,6 +923,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
