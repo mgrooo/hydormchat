@@ -560,6 +560,7 @@ def get_log_worksheet():
 def append_google_sheet_log(question, selected_user_type, sources_text="", answer_preview=""):
     try:
         ws = get_log_worksheet()
+        st.write("로그 저장 대상 워크시트:", ws.title)
 
         ws.append_row([
             datetime.now().isoformat(timespec="seconds"),
@@ -877,6 +878,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
