@@ -1425,7 +1425,7 @@ if st.session_state.pending_question:
     prompt = st.session_state.pending_question
     st.session_state.pending_question = ""
 elif typed_prompt:
-    prompt = typed_prompt)
+    prompt = typed_prompt
 
 if prompt:
     with st.chat_message("user"):
@@ -1563,6 +1563,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
