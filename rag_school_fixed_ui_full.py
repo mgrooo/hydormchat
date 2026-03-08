@@ -1100,8 +1100,11 @@ st.markdown("""
 <div class="setting-box">
     <div class="setting-title">사용자 설정 / User Settings</div>
     <div class="setting-desc">
-        먼저 아래 항목을 선택해 주세요.<br>
-        Please select the options below first.
+        먼저 아래 항목을 선택해 주세요. 답변이 정확해집니다.<br>
+        Please select the options below first.Your answers will be more accurate.<br>
+        중요사항은 반드시 원본 공지문을 함께 대조·확인해 주세요.<br>
+        For important matters, please also confirm with the original Notice text.
+
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -1121,36 +1124,6 @@ selected_user_type = st.selectbox(
 )
 
 ui = get_ui_text(answer_language)
-
-# -----------------------------
-# 상단 사용법 안내
-# -----------------------------
-guide_box = st.container(border=True)
-with guide_box:
-    c1, c2 = st.columns([5, 1.6])
-    with c1:
-        st.markdown("### 📌 사용법 / How to Use")
-    with c2:
-        st.markdown(
-            '<div style="margin-top:0.45rem; text-align:right;">'
-            '<span style="background:#E86A5B; color:white; font-size:0.78rem; '
-            'padding:4px 10px; border-radius:999px; font-weight:700;">필수 / Required</span>'
-            '</div>',
-            unsafe_allow_html=True
-        )
-
-    st.markdown("**사용법:** (1) 사용 언어 선택(한국어, 영어) (2) 사용자 유형 선택 (3) 질문 입력")
-    st.markdown("**How to use:** (1) Select language (Korean, English) (2) Select user type (3) Enter your question")
-
-    st.info(
-        "※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.\n\n"
-        "※ Following these steps helps improve answer accuracy."
-    )
-
-    st.warning(
-        "⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.\n\n"
-        "⚠ For important matters, please also confirm with the original PDF."
-    )
 
 # -----------------------------
 # 사이드바
@@ -1484,3 +1457,4 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
