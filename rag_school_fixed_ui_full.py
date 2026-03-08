@@ -133,54 +133,9 @@ st.markdown("""
     max-width: 980px;
 }
 
-.stButton > button {
-    background-color: #0E4A84;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 0.48rem 0.9rem;
-    font-weight: 600;
-    font-size: 0.98rem;
-    width: 100%;
-    box-shadow: 0 2px 8px rgba(14, 74, 132, 0.12);
-}
-.stButton > button:hover {
-    background-color: #1B6BB8;
-    color: white;
-}
-
-div[data-baseweb="select"] > div {
-    border-radius: 10px;
-    min-height: 44px;
-    font-size: 0.96rem;
-}
-
-div[data-testid="stAlert"] {
-    border-radius: 12px;
-}
-
-.streamlit-expanderHeader {
-    font-weight: 700;
-    color: #0E4A84;
-    font-size: 1rem;
-}
-
-section[data-testid="stSidebar"] h2,
-section[data-testid="stSidebar"] h3 {
-    color: #0E4A84;
-}
-
-section[data-testid="stSidebar"] div[data-testid="stMetric"] {
-    background: #F7FAFC;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px solid #D9E6F2;
-    margin-bottom: 8px;
-}
-
 .banner-card {
     background: linear-gradient(90deg, #0E4A84 0%, #1B6BB8 100%);
-    padding: 26px 24px 22px 24px;
+    padding: 24px 24px 20px 24px;
     border-radius: 18px;
     margin-top: 12px;
     margin-bottom: 18px;
@@ -190,33 +145,32 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
 
 .banner-inner {
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
+    align-items: flex-start;
     gap: 18px;
 }
 
 .banner-text {
     flex: 1;
-    padding-top: 10px;
     min-width: 0;
+    padding-top: 8px;
 }
 
 .banner-logo {
     width: 82px;
     min-width: 82px;
     display: flex;
-    align-items: flex-start;
     justify-content: center;
-    padding-top: 10px;
+    align-items: flex-start;
+    padding-top: 8px;
 }
 
 .banner-title {
-    font-size: 1.38rem;
+    font-size: 1.36rem;
     font-weight: 900;
     color: #FFFFFF;
-    line-height: 1.34;
-    margin-bottom: 10px;
-    margin-top: 8px;
+    line-height: 1.35;
+    margin: 0 0 10px 0;
 }
 
 .banner-subtitle {
@@ -226,114 +180,25 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     line-height: 1.55;
 }
 
-.setting-box {
-    background:#F7FAFC;
-    border:1px solid #D9E6F2;
-    border-radius:14px;
-    padding:13px 15px;
-    margin-bottom:14px;
-}
-.setting-title {
-    font-size:0.98rem;
-    font-weight:800;
-    color:#0E4A84;
-    margin-bottom:4px;
-}
-.setting-desc {
-    font-size:0.88rem;
-    color:#4B5563;
-    line-height:1.5;
-}
-
-.sidebar-card {
-    background: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 14px;
-    padding: 14px 12px;
-    text-align: center;
-    margin-bottom: 16px;
-}
-.sidebar-ko {
-    font-size: 1.02rem;
-    font-weight: 850;
-    color: #0E4A84;
-    margin-top: 4px;
-}
-.sidebar-en {
-    font-size: 0.84rem;
-    color: #4A5568;
-    margin-top: 1px;
-}
-.fake-disabled {
-    display: inline-block;
-    width: 100%;
-    text-align: center;
-    background: #D1D5DB;
-    color: #6B7280;
-    padding: 0.72rem 0.9rem;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    margin-top: 10px;
-    cursor: not-allowed;
-    user-select: none;
-    pointer-events: none;
-}
-.small-note {
-    font-size: 0.82rem;
-    color: #6B7280;
-    margin-top: 8px;
-    line-height: 1.45;
-}
-
-div[data-testid="stChatMessage"] {
-    border-radius: 14px;
-    padding: 5px 7px;
-}
-
-div[data-testid="column"] {
-    padding-top: 0.1rem;
-    padding-bottom: 0.1rem;
-}
-
-div[data-testid="stVerticalBlockBorderWrapper"] {
-    border-radius: 16px;
-}
-
 @media (max-width: 768px) {
     .block-container {
         padding-top: 1.2rem;
         padding-bottom: 1rem;
     }
-
     .banner-card {
-        padding: 22px 18px 18px 18px;
-        min-height: 160px;
+        padding: 20px 18px 18px 18px;
+        min-height: 158px;
     }
-
-    .banner-inner {
-        gap: 12px;
-    }
-
-    .banner-text {
-        padding-top: 12px;
-    }
-
     .banner-logo {
         width: 62px;
         min-width: 62px;
-        padding-top: 12px;
+        padding-top: 10px;
     }
-
     .banner-title {
-        font-size: 1.14rem;
-        line-height: 1.38;
-        margin-top: 10px;
+        font-size: 1.12rem;
     }
-
     .banner-subtitle {
         font-size: 0.82rem;
-        line-height: 1.5;
     }
 }
 </style>
@@ -344,15 +209,14 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 # -----------------------------
 logo_path = "hanyang_logo.png"
 
-logo_html = ""
 if os.path.exists(logo_path):
     with open(logo_path, "rb") as f:
         logo_b64 = base64.b64encode(f.read()).decode("utf-8")
-    logo_html = f'<img src="data:image/png;base64,{logo_b64}" style="width:72px; height:auto; display:block;" />'
+    logo_html = f'<img src="data:image/png;base64,{logo_b64}" style="width:72px;height:auto;display:block;" />'
 else:
-    logo_html = '<div style="font-size:46px;">🏫</div>'
+    logo_html = '<div style="font-size:44px;">🏫</div>'
 
-st.markdown(f"""
+banner_html = f"""
 <div class="banner-card">
     <div class="banner-inner">
         <div class="banner-text">
@@ -361,7 +225,6 @@ st.markdown(f"""
                 학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
                 - 입사신청기간, 합격자 발표, 생활관비 납부, 제출서류 안내<br>
                 - 중요사항은 반드시 원본 공지도 함께 확인해 주세요<br><br>
-
                 Answers are based on dormitory guidelines and official notices.<br>
                 - Application period, results, fee payment, and required documents<br>
                 - Please check the original notice for important matters
@@ -372,7 +235,9 @@ st.markdown(f"""
         </div>
     </div>
 </div>
-""", unsafe_allow_html=True)
+"""
+
+st.markdown(banner_html, unsafe_allow_html=True)
 
 # -----------------------------
 # 유틸 함수
@@ -1480,3 +1345,4 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
