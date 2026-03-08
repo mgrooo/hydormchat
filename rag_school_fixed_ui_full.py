@@ -220,14 +220,14 @@ banner_html = f"""
 <div class="banner-card">
     <div class="banner-inner">
         <div class="banner-text">
-            <div class="banner-title">한양대(서울) 학생생활관 챗봇 · 토리</div>
+            <div class="banner-title">한양대(서울) 학생생활관 챗봇 · 토리(Beta Test)</div>
             <div class="banner-subtitle">
                 학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
                 - 입사신청기간, 합격자 발표, 생활관비 납부, 제출서류 안내<br>
-                - 중요사항은 반드시 원본 공지도 함께 확인해 주세요<br><br>
+                - 중요사항은 정확성 일치를 위해 반드시 원본 공지도 함께 확인해 주세요<br><br>
                 Answers are based on dormitory guidelines and official notices.<br>
-                - Application period, results, fee payment, and required documents<br>
-                - Please check the original notice for important matters
+                - Application period, results, fee payment, and required documents.<br>
+                - Please check the original notice for important matters to ensure accuracy.
             </div>
         </div>
         <div class="banner-logo">
@@ -1345,4 +1345,5 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
