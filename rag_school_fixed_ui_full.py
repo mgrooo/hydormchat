@@ -311,11 +311,11 @@ with col2:
         <div class="banner-title">한양대(서울) 학생생활관 챗봇 · 토리</div>
         <div class="banner-subtitle">
             학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
-            - 입사신청기간, 합격자 발표, 생활관비 납부, 제출서류, 문의처 등
+            - 입사신청기간, 합격자 발표, 생활관비 납부, 제출서류, 문의처 등<br>
             Answers are based on the dormitory recruitment guidelines and official documents.
             - Application period, announcement of successful applicants, dormitory fee payment, required documents, contact information, etc.
 
-        </div>
+    
     </div>
     """, unsafe_allow_html=True)
 
@@ -1457,5 +1457,6 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
