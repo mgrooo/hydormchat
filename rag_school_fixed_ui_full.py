@@ -1209,8 +1209,11 @@ with st.sidebar:
 
     <div class="sidebar-ko" style="margin-top:10px;">
     학생생활관 챗봇
-    </div>
-st.markdown("""
+    </div># -----------------------------
+# 상단 사용법 안내
+# -----------------------------
+st.markdown(
+    '''
 <div style="
 background:#FCFBF7;
 border:1px solid #E9E3D7;
@@ -1283,12 +1286,9 @@ box-shadow:0 1px 6px rgba(0,0,0,0.03);
         ⚠ For important matters, please also confirm with the original PDF.
     </div>
 </div>
-""", unsafe_allow_html=True)
-    <div class="sidebar-en">
-    Dormitory Chatbot
-    </div>
-    </div>
-    """, unsafe_allow_html=True)
+''',
+    unsafe_allow_html=True
+)
 
     st.markdown("---")
     st.subheader("현재 선택 / Current Selection")
@@ -1603,4 +1603,5 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
