@@ -1223,11 +1223,6 @@ with st.sidebar:
             st.rerun()
 
 # -----------------------------
-# 안내 박스
-# -----------------------------
-st.markdown(ui["guide"], unsafe_allow_html=True)
-
-# -----------------------------
 # 상태 표시
 # -----------------------------
 selected_user_type_display = get_category_display_name(selected_user_type, answer_language)
@@ -1446,6 +1441,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
