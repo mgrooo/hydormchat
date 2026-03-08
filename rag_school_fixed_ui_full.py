@@ -128,7 +128,7 @@ client = OpenAI(api_key=api_key)
 st.markdown("""
 <style>
 .block-container {
-    padding-top: 2.2rem;
+    padding-top: 1.6rem;
     padding-bottom: 1.4rem;
     max-width: 980px;
 }
@@ -180,25 +180,50 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
 
 .banner-card {
     background: linear-gradient(90deg, #0E4A84 0%, #1B6BB8 100%);
-    padding: 16px 18px;
-    border-radius: 16px;
-    margin-top: 10px;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    padding: 26px 24px 22px 24px;
+    border-radius: 18px;
+    margin-top: 12px;
+    margin-bottom: 18px;
+    min-height: 170px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
 }
+
+.banner-inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.banner-text {
+    flex: 1;
+    padding-top: 10px;
+    min-width: 0;
+}
+
+.banner-logo {
+    width: 82px;
+    min-width: 82px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10px;
+}
+
 .banner-title {
-    font-size: 1.55rem;
-    font-weight: 850;
-    letter-spacing: -0.3px;
+    font-size: 1.38rem;
+    font-weight: 900;
     color: #FFFFFF;
-    line-height: 1.22;
-    margin-bottom: 6px;
+    line-height: 1.34;
+    margin-bottom: 10px;
+    margin-top: 8px;
 }
+
 .banner-subtitle {
-    font-size: 0.92rem;
+    font-size: 0.91rem;
     font-weight: 600;
     color: #EAF3FF;
-    line-height: 1.45;
+    line-height: 1.55;
 }
 
 .setting-box {
@@ -277,49 +302,77 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 
 @media (max-width: 768px) {
     .block-container {
-        padding-top: 0.7rem;
+        padding-top: 1.2rem;
         padding-bottom: 1rem;
     }
-    .banner-title {
-        font-size: 1.3rem;
+
+    .banner-card {
+        padding: 22px 18px 18px 18px;
+        min-height: 160px;
     }
+
+    .banner-inner {
+        gap: 12px;
+    }
+
+    .banner-text {
+        padding-top: 12px;
+    }
+
+    .banner-logo {
+        width: 62px;
+        min-width: 62px;
+        padding-top: 12px;
+    }
+
+    .banner-title {
+        font-size: 1.14rem;
+        line-height: 1.38;
+        margin-top: 10px;
+    }
+
     .banner-subtitle {
-        font-size: 0.86rem;
+        font-size: 0.82rem;
+        line-height: 1.5;
     }
 }
 </style>
 """, unsafe_allow_html=True)
+
 # -----------------------------
 # 상단 배너
 # -----------------------------
 logo_path = "hanyang_logo.png"
 
-col1, col2 = st.columns([0.7, 8.3])
+logo_html = ""
+if os.path.exists(logo_path):
+    with open(logo_path, "rb") as f:
+        logo_b64 = base64.b64encode(f.read()).decode("utf-8")
+    logo_html = f'<img src="data:image/png;base64,{logo_b64}" style="width:72px; height:auto; display:block;" />'
+else:
+    logo_html = '<div style="font-size:46px;">🏫</div>'
 
-with col1:
-    st.markdown('<div style="height:10px;"></div>', unsafe_allow_html=True)
-    if os.path.exists(logo_path):
-        st.image(logo_path, width=54)
-    else:
-        st.markdown(
-            "<div style='font-size:42px; text-align:center; padding-top:10px;'>🏫</div>",
-            unsafe_allow_html=True
-        )
+st.markdown(f"""
+<div class="banner-card">
+    <div class="banner-inner">
+        <div class="banner-text">
+            <div class="banner-title">한양대(서울) 학생생활관 챗봇 · 토리</div>
+            <div class="banner-subtitle">
+                학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
+                - 입사신청기간, 합격자 발표, 생활관비 납부, 제출서류 안내<br>
+                - 중요사항은 반드시 원본 공지도 함께 확인해 주세요<br><br>
 
-with col2:
-    st.markdown("""
-    <div class="banner-card">
-        <div class="banner-title">한양대(서울) 학생생활관 챗봇 · 토리</div>
-        <div class="banner-subtitle">
-            학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
-            - 입사신청기간, 합격자 발표, 생활관비 납부, 제출서류 등<br>
-            - 챗봇 오류 가능성을 감안하여, 중요사항은 원본 공지도 대조확인해 주세요<br><br>
-            Answers are based on the dormitory recruitment guidelines and official documents.<br>
-            - Application period, results, dormitory fee payment, required documents, etc.<br>
-            - For important matters, please check the original notice as well.
+                Answers are based on dormitory guidelines and official notices.<br>
+                - Application period, results, fee payment, and required documents<br>
+                - Please check the original notice for important matters
+            </div>
+        </div>
+        <div class="banner-logo">
+            {logo_html}
         </div>
     </div>
-    """, unsafe_allow_html=True)
+</div>
+""", unsafe_allow_html=True)
 
 # -----------------------------
 # 유틸 함수
@@ -758,20 +811,6 @@ def get_ui_text(lang="한국어"):
             "recent_logs": "Recent Logs",
             "faq_title": "⭐ Frequently Asked Questions",
             "faq_caption": "Tap a question below to ask instantly.",
-            "guide": """
-            <div style="
-                background:#F7FAFC;
-                border:1px solid #D9E6F2;
-                border-radius:14px;
-                padding:14px 16px;
-                margin-bottom:18px;
-            ">
-                <b style="color:#0E4A84;">Guide</b><br>
-                Ask about the dorm application period, result announcement, dorm fee payment,
-                required documents, or contact information, and the chatbot will answer based on
-                the uploaded dormitory guide documents.
-            </div>
-            """,
             "status_info_prefix": "Selected user type",
             "status_lang_prefix": "Response language",
             "status_caption": "Registered PDF pages",
@@ -809,7 +848,6 @@ def get_ui_text(lang="한국어"):
         "recent_logs": "최근 로그 보기",
         "faq_title": "⭐ 자주 묻는 질문",
         "faq_caption": "버튼을 누르면 바로 질문할 수 있습니다.",
-
         "status_info_prefix": "현재 선택한 사용자 유형",
         "status_lang_prefix": "답변 언어",
         "status_caption": "등록된 PDF 페이지 수",
@@ -1093,8 +1131,8 @@ st.markdown("""
 <div class="setting-box">
     <div class="setting-title">사용자 설정 / User Settings</div>
     <div class="setting-desc">
-        먼저 아래 항목을 선택해 주세요. 답변이 정확해집니다.<br>
-        Please select the options below first.Your answers will be more accurate.
+        먼저 아래 항목을 선택해 주세요. 답변 정확도가 높아집니다.<br>
+        Please select the options below first for more accurate answers.
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -1442,13 +1480,3 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
-
-
-
-
-
-
-
-
-
-
