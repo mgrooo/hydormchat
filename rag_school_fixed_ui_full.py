@@ -128,7 +128,7 @@ client = OpenAI(api_key=api_key)
 st.markdown("""
 <style>
 .block-container {
-    padding-top: 0.9rem;
+    padding-top: 2.2rem;
     padding-bottom: 1.4rem;
     max-width: 980px;
 }
@@ -182,6 +182,7 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     background: linear-gradient(90deg, #0E4A84 0%, #1B6BB8 100%);
     padding: 16px 18px;
     border-radius: 16px;
+    margin-top: 10px;
     margin-bottom: 12px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
@@ -297,11 +298,12 @@ logo_path = "hanyang_logo.png"
 col1, col2 = st.columns([0.8, 8.2])
 
 with col1:
+    st.markdown("<div style='padding-top:10px;'></div>", unsafe_allow_html=True)
     if os.path.exists(logo_path):
         st.image(logo_path, width=62)
     else:
         st.markdown(
-            "<div style='font-size:48px; text-align:center;'>🏫</div>",
+            "<div style='font-size:48px; text-align:center; padding-top:10px;'>🏫</div>",
             unsafe_allow_html=True
         )
 
@@ -1441,6 +1443,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
