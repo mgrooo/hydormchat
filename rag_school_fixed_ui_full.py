@@ -270,6 +270,10 @@ div[data-testid="column"] {
     padding-bottom: 0.1rem;
 }
 
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    border-radius: 16px;
+}
+
 @media (max-width: 768px) {
     .block-container {
         padding-top: 0.7rem;
@@ -834,9 +838,6 @@ def is_english_text(text: str) -> bool:
     return bool(re.search(r"[A-Za-z]", text))
 
 
-# -----------------------------
-# 로컬 로그 저장
-# -----------------------------
 def append_local_question_log(question, selected_user_type, sources_text="", answer_preview=""):
     ensure_directories()
 
@@ -869,9 +870,6 @@ def read_local_question_logs():
     return rows
 
 
-# -----------------------------
-# Google Sheets
-# -----------------------------
 def get_gspread_client():
     if "gcp_service_account" not in st.secrets:
         raise ValueError("secrets.toml에 [gcp_service_account] 가 없습니다.")
@@ -1026,9 +1024,6 @@ def build_quick_questions(answer_language="한국어", logs=None):
     return deduped[:6]
 
 
-# -----------------------------
-# 캐시 저장 / 불러오기
-# -----------------------------
 def load_cached_rag_data():
     if not os.path.exists(RAG_CACHE_FILE):
         return None
@@ -1131,40 +1126,32 @@ ui = get_ui_text(answer_language)
 # 상단 사용법 안내
 # -----------------------------
 guide_box = st.container(border=True)
-
 with guide_box:
-    st.markdown("### 사용법 / How to Use  ")
+    c1, c2 = st.columns([5, 1.6])
+    with c1:
+        st.markdown("### 📌 사용법 / How to Use")
+    with c2:
+        st.markdown(
+            '<div style="margin-top:0.45rem; text-align:right;">'
+            '<span style="background:#E86A5B; color:white; font-size:0.78rem; '
+            'padding:4px 10px; border-radius:999px; font-weight:700;">필수 / Required</span>'
+            '</div>',
+            unsafe_allow_html=True
+        )
 
-    st.markdown("""
-<style>
-div[data-testid="stVerticalBlockBorderWrapper"] {
-    border-radius: 16px;
-}
-</style>
-""", unsafe_allow_html=True)
-    
-    st.markdown(
-        '<span style="background:#E86A5B; color:white; font-size:0.78rem; '
-        'padding:4px 10px; border-radius:999px; font-weight:700;">필수 / Required</span>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        "**사용법:** (1) 사용 언어 선택(한국어, 영어) (2) 사용자 유형 선택 (3) 질문 입력"
-    )
-    st.markdown(
-        "**How to use:** (1) Select language (Korean, English) (2) Select user type (3) Enter your question"
-    )
+    st.markdown("**사용법:** (1) 사용 언어 선택(한국어, 영어) (2) 사용자 유형 선택 (3) 질문 입력")
+    st.markdown("**How to use:** (1) Select language (Korean, English) (2) Select user type (3) Enter your question")
 
     st.info(
         "※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.\n\n"
         "※ Following these steps helps improve answer accuracy."
     )
 
-st.warning(
-    "⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.\n\n"
-    "⚠ For important matters, please also confirm with the Original text
-)
+    st.warning(
+        "⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.\n\n"
+        "⚠ For important matters, please also confirm with the original PDF."
+    )
+
 # -----------------------------
 # 사이드바
 # -----------------------------
@@ -1192,7 +1179,6 @@ with st.sidebar:
         selected_user_type,
         answer_language
     )
-
     st.caption(f"{selected_user_type_display} · {answer_language}")
 
     st.markdown(
@@ -1498,7 +1484,3 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
-
-
-
-
