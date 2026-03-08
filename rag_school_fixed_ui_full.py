@@ -312,7 +312,7 @@ with col2:
         <div class="banner-subtitle">
             학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
             - 입사신청기간, 합격자 발표, 생활관비 납부, 제출서류, 문의처 등<br>
-            Answers are based on the dormitory recruitment guidelines and official documents.
+            Answers are based on the dormitory recruitment guidelines and official documents.<br>
             - Application period, announcement of successful applicants, dormitory fee payment, required documents, contact information, etc.
 
     
@@ -1457,6 +1457,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
