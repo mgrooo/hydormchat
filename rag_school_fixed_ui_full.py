@@ -1196,32 +1196,6 @@ ui = get_ui_text(answer_language)
 # -----------------------------
 # 상단 사용법 안내
 # -----------------------------
-st.markdown("""
-<div class="guide-box">
-    <div class="guide-title">
-        📌 사용법 / How to Use
-        <span class="required-badge">필수 / Required</span>
-    </div>
-
-    <div class="guide-main">
-        사용법: (1) 사용 언어 선택(한국어, 영어) (2) 사용자 유형 선택 (3) 질문 입력
-    </div>
-
-    <div class="guide-main">
-        How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
-    </div>
-
-    <div class="guide-note">
-        ※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.<br>
-        ※ Following these steps helps improve answer accuracy.
-    </div>
-
-    <div class="guide-warning">
-        ⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.<br>
-        ⚠ For important matters, please also confirm with the original PDF.
-    </div>
-</div>
-""", unsafe_allow_html=True)
 
 # -----------------------------
 # 사이드바
@@ -1236,7 +1210,80 @@ with st.sidebar:
     <div class="sidebar-ko" style="margin-top:10px;">
     학생생활관 챗봇
     </div>
+st.markdown("""
+<div style="
+background:#FCFBF7;
+border:1px solid #E9E3D7;
+border-radius:16px;
+padding:14px 16px;
+margin-bottom:16px;
+line-height:1.6;
+box-shadow:0 1px 6px rgba(0,0,0,0.03);
+">
+    <div style="
+    font-weight:800;
+    color:#6F5A2A;
+    margin-bottom:8px;
+    font-size:1rem;
+    ">
+        📌 사용법 / How to Use
+        <span style="
+        background:#E86A5B;
+        color:white;
+        font-size:0.74rem;
+        padding:3px 8px;
+        border-radius:999px;
+        margin-left:6px;
+        vertical-align:middle;
+        ">필수 / Required</span>
+    </div>
 
+    <div style="
+    font-weight:650;
+    color:#243B5A;
+    margin-bottom:6px;
+    font-size:0.91rem;
+    ">
+        사용법: (1) 사용 언어 선택(한국어, 영어) (2) 사용자 유형 선택 (3) 질문 입력
+    </div>
+
+    <div style="
+    font-weight:650;
+    color:#243B5A;
+    margin-bottom:8px;
+    font-size:0.91rem;
+    ">
+        How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
+    </div>
+
+    <div style="
+    background:#F8F5EE;
+    border:1px solid #E8DFCF;
+    border-radius:10px;
+    padding:10px 12px;
+    color:#6A5C3A;
+    font-size:0.85rem;
+    font-weight:550;
+    margin-bottom:8px;
+    ">
+        ※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.<br>
+        ※ Following these steps helps improve answer accuracy.
+    </div>
+
+    <div style="
+    background:#FAF3F1;
+    border:1px solid #E9D6D1;
+    border-radius:10px;
+    padding:10px 12px;
+    color:#7A4B44;
+    font-size:0.85rem;
+    font-weight:550;
+    ">
+        ⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.<br>
+        ⚠ For important matters, please also confirm with the original PDF.
+    </div>
+</div>
+""", unsafe_allow_html=True)
     <div class="sidebar-en">
     Dormitory Chatbot
     </div>
@@ -1556,3 +1603,4 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
