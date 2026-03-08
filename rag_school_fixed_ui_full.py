@@ -313,10 +313,9 @@ with col2:
             학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
             - 입사신청기간, 합격자 발표, 생활관비 납부, 제출서류, 문의처 등<br>
              * 챗봇 오류 가능성을 감안하여, 중요사항은 원본 공지문 내용도 대조확인해주세요<br>
-
             Answers are based on the dormitory recruitment guidelines and official documents.<br>
-            - Application period, announcement of successful applicants, dormitory fee payment, required documents, contact information, etc.
-             * Please note that chatbot errors may occur, so please check the original notice for important information.
+            - Application period, announcement of successful applicants, dormitory fee payment, required documents, contact information, etc.<br>
+             * Please note that chatbot errors may occur, so please check the original notice for important information. </div>
              
     </div>
     """, unsafe_allow_html=True)
@@ -1447,6 +1446,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
