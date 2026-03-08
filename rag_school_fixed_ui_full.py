@@ -133,7 +133,6 @@ st.markdown("""
     max-width: 980px;
 }
 
-/* 기본 버튼 */
 .stButton > button {
     background-color: #0E4A84;
     color: white;
@@ -179,7 +178,6 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     margin-bottom: 8px;
 }
 
-/* 상단 배너 */
 .banner-card {
     background: linear-gradient(90deg, #0E4A84 0%, #1B6BB8 100%);
     padding: 16px 18px;
@@ -202,7 +200,6 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     line-height: 1.45;
 }
 
-/* 사용자 설정 박스 */
 .setting-box {
     background:#F7FAFC;
     border:1px solid #D9E6F2;
@@ -222,58 +219,6 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     line-height:1.5;
 }
 
-/* 사용법 박스 */
-.guide-box {
-    background: #FCFBF7;
-    border: 1px solid #E9E3D7;
-    border-radius: 16px;
-    padding: 14px 16px;
-    margin-bottom: 16px;
-    line-height: 1.6;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.03);
-}
-.guide-title {
-    font-weight: 800;
-    color: #6F5A2A;
-    margin-bottom: 8px;
-    font-size: 1rem;
-}
-.required-badge {
-    background: #E86A5B;
-    color: white;
-    font-size: 0.74rem;
-    padding: 3px 8px;
-    border-radius: 999px;
-    margin-left: 6px;
-    vertical-align: middle;
-}
-.guide-main {
-    font-weight: 650;
-    color: #243B5A;
-    margin-bottom: 6px;
-    font-size: 0.91rem;
-}
-.guide-note {
-    background: #F8F5EE;
-    border: 1px solid #E8DFCF;
-    border-radius: 10px;
-    padding: 10px 12px;
-    color: #6A5C3A;
-    font-size: 0.85rem;
-    font-weight: 550;
-    margin-bottom: 8px;
-}
-.guide-warning {
-    background: #FAF3F1;
-    border: 1px solid #E9D6D1;
-    border-radius: 10px;
-    padding: 10px 12px;
-    color: #7A4B44;
-    font-size: 0.85rem;
-    font-weight: 550;
-}
-
-/* 사이드바 카드 */
 .sidebar-card {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
@@ -315,19 +260,16 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     line-height: 1.45;
 }
 
-/* 채팅 */
 div[data-testid="stChatMessage"] {
     border-radius: 14px;
     padding: 5px 7px;
 }
 
-/* FAQ 버튼 간격 */
 div[data-testid="column"] {
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
 }
 
-/* 모바일 */
 @media (max-width: 768px) {
     .block-container {
         padding-top: 0.7rem;
@@ -338,14 +280,6 @@ div[data-testid="column"] {
     }
     .banner-subtitle {
         font-size: 0.86rem;
-    }
-    .guide-title {
-        font-size: 0.95rem;
-    }
-    .guide-main,
-    .guide-note,
-    .guide-warning {
-        font-size: 0.84rem;
     }
 }
 </style>
@@ -1196,22 +1130,6 @@ ui = get_ui_text(answer_language)
 # -----------------------------
 # 상단 사용법 안내
 # -----------------------------
-
-# -----------------------------
-# 사이드바
-# -----------------------------
-with st.sidebar:
-    st.markdown("""
-    <div class="sidebar-card">
-    <div style="font-size:40px;">🏫</div>
-    <div class="sidebar-ko">한양대(서울)</div>
-    <div class="sidebar-en">Hanyang Univ. (Seoul)</div>
-
-    <div class="sidebar-ko" style="margin-top:10px;">
-    학생생활관 챗봇
-    </div># -----------------------------
-# 상단 사용법 안내
-# -----------------------------
 st.markdown(
     '''
 <div style="
@@ -1289,6 +1207,26 @@ box-shadow:0 1px 6px rgba(0,0,0,0.03);
 ''',
     unsafe_allow_html=True
 )
+
+# -----------------------------
+# 사이드바
+# -----------------------------
+with st.sidebar:
+    st.markdown("""
+    <div class="sidebar-card">
+    <div style="font-size:40px;">🏫</div>
+    <div class="sidebar-ko">한양대(서울)</div>
+    <div class="sidebar-en">Hanyang Univ. (Seoul)</div>
+
+    <div class="sidebar-ko" style="margin-top:10px;">
+    학생생활관 챗봇
+    </div>
+
+    <div class="sidebar-en">
+    Dormitory Chatbot
+    </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.markdown("---")
     st.subheader("현재 선택 / Current Selection")
@@ -1603,5 +1541,3 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
-
-
