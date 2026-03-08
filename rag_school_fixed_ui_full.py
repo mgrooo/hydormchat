@@ -323,36 +323,6 @@ with col2:
     """, unsafe_allow_html=True)
 
 # -----------------------------
-# 상단 사용법 안내
-# -----------------------------
-
-st.markdown("""
-<div class="guide-box">
-<div class="guide-title">
-📌 사용법 / How to Use
-<span class="required-badge">필수 / Required</span>
-</div>
-
-<div class="guide-main">
-사용법 : (1) 사용 언어 선택(한국어, 영어) (2) 사용자 유형 선택 (3) 질문 입력
-</div>
-
-<div class="guide-main">
-How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
-</div>
-
-<div class="guide-note">
-※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.<br>
-※ Following these steps is required for more accurate answers.
-</div>
-
-<div class="guide-warning">
-⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.<br>
-⚠ For important matters, please always compare and confirm with the original PDF as well.
-</div>
-</div>
-""", unsafe_allow_html=True)
-# -----------------------------
 # 유틸 함수
 # -----------------------------
 def ensure_directories():
@@ -412,16 +382,6 @@ def get_category_display_name(category_key: str, lang: str = "한국어") -> str
     if category_key not in CATEGORY_LABELS:
         return category_key
     return CATEGORY_LABELS[category_key]["en"] if lang == "English" else CATEGORY_LABELS[category_key]["ko"]
-
-
-def detect_auto_language(text: str) -> str:
-    if not text:
-        return "한국어"
-    english_letters = len(re.findall(r"[A-Za-z]", text))
-    korean_letters = len(re.findall(r"[가-힣]", text))
-    if english_letters >= 5 and english_letters > korean_letters:
-        return "English"
-    return "한국어"
 
 
 def save_uploaded_pdf(uploaded_file):
@@ -779,13 +739,8 @@ def load_all_pdfs_from_folder():
 def get_ui_text(lang="한국어"):
     if lang == "English":
         return {
-            "section_user_type": "Select User Type",
-            "label_user_type": "User Type",
-            "help_user_type": "Select your user type before asking so the chatbot can prioritize the relevant dormitory guide.",
             "section_tools": "Tools",
             "section_popular": "Popular Questions",
-            "label_language": "Response Language",
-            "caption_current": "Current selection",
             "metric_total": "Total Questions",
             "metric_cache": "Cache",
             "cache_yes": "Yes",
@@ -803,7 +758,7 @@ def get_ui_text(lang="한국어"):
             "searchable_docs": "Searchable Documents",
             "recent_logs": "Recent Logs",
             "faq_title": "⭐ Frequently Asked Questions",
-            "faq_caption": "Click a question below to ask instantly. Common questions are updated automatically.",
+            "faq_caption": "Tap a question below to ask instantly.",
             "guide": """
             <div style="
                 background:#F7FAFC;
@@ -831,17 +786,13 @@ def get_ui_text(lang="한국어"):
             "user_type": "User type",
             "response_language": "Response language",
             "sources": "Sources",
-            "top_questions_label": "Top Questions"
+            "top_questions_label": "Top Questions",
+            "ask_first": "질문 입력 / Enter your question"
         }
 
     return {
-        "section_user_type": "사용자 유형 선택",
-        "label_user_type": "사용자 유형",
-        "help_user_type": "질문 전에 본인 유형을 선택하면 해당 모집요강 중심으로 답변합니다.",
         "section_tools": "운영 도구",
         "section_popular": "자주 나온 질문",
-        "label_language": "답변 언어",
-        "caption_current": "현재 선택",
         "metric_total": "누적 질문 수",
         "metric_cache": "캐시 사용",
         "cache_yes": "예",
@@ -859,7 +810,7 @@ def get_ui_text(lang="한국어"):
         "searchable_docs": "검색 문서 수",
         "recent_logs": "최근 로그 보기",
         "faq_title": "⭐ 자주 묻는 질문",
-        "faq_caption": "버튼을 누르면 바로 질문할 수 있습니다. 최근 많이 들어온 질문이 자동 반영됩니다.",
+        "faq_caption": "버튼을 누르면 바로 질문할 수 있습니다.",
         "guide": """
         <div style="
             background:#F7FAFC;
@@ -886,12 +837,14 @@ def get_ui_text(lang="한국어"):
         "user_type": "선택 유형",
         "response_language": "답변 언어",
         "sources": "참고 자료",
-        "top_questions_label": "자주 나온 질문 통계"
+        "top_questions_label": "자주 나온 질문 통계",
+        "ask_first": "질문 입력 / Enter your question"
     }
 
 
 def is_english_text(text: str) -> bool:
     return bool(re.search(r"[A-Za-z]", text))
+
 
 # -----------------------------
 # 로컬 로그 저장
@@ -926,6 +879,7 @@ def read_local_question_logs():
             except Exception:
                 continue
     return rows
+
 
 # -----------------------------
 # Google Sheets
@@ -1083,6 +1037,7 @@ def build_quick_questions(answer_language="한국어", logs=None):
 
     return deduped[:6]
 
+
 # -----------------------------
 # 캐시 저장 / 불러오기
 # -----------------------------
@@ -1125,6 +1080,7 @@ def load_rag_data(pdf_inventory_signature: str):
 
     save_cached_rag_data(pdf_inventory_signature, all_pages, docs, doc_embeddings)
     return all_pages, docs, doc_embeddings, False
+
 
 # -----------------------------
 # 시작
@@ -1202,10 +1158,39 @@ selected_user_type = st.selectbox(
 ui = get_ui_text(answer_language)
 
 # -----------------------------
+# 상단 사용법 안내
+# -----------------------------
+st.markdown("""
+<div class="guide-box">
+<div class="guide-title">
+📌 사용법 / How to Use
+<span class="required-badge">필수 / Required</span>
+</div>
+
+<div class="guide-main">
+사용법 : (1) 사용 언어 선택(한국어, 영어) (2) 사용자 유형 선택 (3) 질문 입력
+</div>
+
+<div class="guide-main">
+How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
+</div>
+
+<div class="guide-note">
+※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.<br>
+※ Following these steps is required for more accurate answers.
+</div>
+
+<div class="guide-warning">
+⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.<br>
+⚠ For important matters, please always compare and confirm with the original PDF as well.
+</div>
+</div>
+""", unsafe_allow_html=True)
+
+# -----------------------------
 # 사이드바
 # -----------------------------
 with st.sidebar:
-
     st.markdown("""
     <div class="sidebar-card">
     <div style="font-size:48px;">🏫</div>
@@ -1223,7 +1208,6 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.markdown("---")
-
     st.subheader("현재 선택 / Current Selection")
 
     selected_user_type_display = get_category_display_name(
@@ -1250,12 +1234,9 @@ with st.sidebar:
 
     if is_admin:
         if st.button(ui["reload_button"], use_container_width=True):
-
             st.cache_resource.clear()
-
             if os.path.exists(RAG_CACHE_FILE):
                 os.remove(RAG_CACHE_FILE)
-
             st.rerun()
 
     st.metric(ui["metric_total"], len(current_logs))
@@ -1272,7 +1253,6 @@ with st.sidebar:
     )
 
     if sidebar_stats:
-
         sidebar_counter = {}
         all_stats = get_question_stats(current_logs)
 
@@ -1284,7 +1264,6 @@ with st.sidebar:
 
         for q, count in list(sidebar_counter.items())[:10]:
             st.write(f"• {q} ({count})")
-
     else:
         st.caption(ui["no_stats"])
 
@@ -1297,52 +1276,24 @@ with st.sidebar:
     )
 
     if admin_pw_input:
-
         if admin_pw_input == ADMIN_PASSWORD:
             st.session_state.admin_authenticated = True
             st.success(ui["admin_success"])
-
         else:
             st.error(ui["admin_error"])
 
     if st.session_state.admin_authenticated:
-
         uploaded_file = st.file_uploader(
             ui["upload_pdf"],
             type=["pdf"]
         )
 
         if uploaded_file is not None:
-
             save_uploaded_pdf(uploaded_file)
-
             st.success(f"{ui['upload_success']}: {uploaded_file.name}")
-
             st.cache_resource.clear()
-
             if os.path.exists(RAG_CACHE_FILE):
                 os.remove(RAG_CACHE_FILE)
-
-            st.rerun()
-
-
-# -----------------------------
-# FAQ 버튼 (모바일 2열)
-# -----------------------------
-quick_questions = build_quick_questions(
-    answer_language=answer_language,
-    logs=current_logs
-)
-
-st.subheader(ui["faq_title"])
-st.caption(ui["faq_caption"])
-
-cols = st.columns(2)
-for i, q in enumerate(quick_questions):
-    button_key = f"quick_btn_{i}_{normalize_question_for_button(q)}"
-    with cols[i % 2]:
-        if st.button(q, key=button_key, use_container_width=True):
-            st.session_state.pending_question = q
             st.rerun()
 
 # -----------------------------
@@ -1382,21 +1333,6 @@ if st.session_state.admin_authenticated:
             st.caption("No logs yet." if answer_language == "English" else "아직 로그가 없습니다.")
 
 # -----------------------------
-# FAQ / 빠른 질문
-# -----------------------------
-quick_questions = build_quick_questions(answer_language=answer_language, logs=current_logs)
-
-st.subheader(ui["faq_title"])
-st.caption(ui["faq_caption"])
-
-cols = st.columns(3)
-for i, q in enumerate(quick_questions):
-    with cols[i % 3]:
-        if st.button(q, key=f"quick_{i}"):
-            st.session_state.pending_question = q
-            st.rerun()
-
-# -----------------------------
 # 이전 대화 표시
 # -----------------------------
 for msg in st.session_state.chat_history:
@@ -1416,9 +1352,29 @@ for msg in st.session_state.chat_history:
             st.caption(f"{msg_ui['sources']}: {msg['sources_text']}")
 
 # -----------------------------
-# 질문 입력
+# 질문 입력 (FAQ보다 위)
 # -----------------------------
+st.subheader(ui["ask_first"])
 typed_prompt = st.chat_input(ui["chat_input"])
+
+# -----------------------------
+# FAQ 버튼 (모바일 2열)
+# -----------------------------
+quick_questions = build_quick_questions(
+    answer_language=answer_language,
+    logs=current_logs
+)
+
+st.subheader(ui["faq_title"])
+st.caption(ui["faq_caption"])
+
+cols = st.columns(2)
+for i, q in enumerate(quick_questions):
+    button_key = f"quick_btn_{i}_{normalize_question_for_button(q)}"
+    with cols[i % 2]:
+        if st.button(q, key=button_key, use_container_width=True):
+            st.session_state.pending_question = q
+            st.rerun()
 
 prompt = ""
 if st.session_state.pending_question:
@@ -1563,14 +1519,3 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
-
-
-
-
-
-
-
-
-
-
-
