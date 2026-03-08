@@ -289,21 +289,20 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 }
 </style>
 """, unsafe_allow_html=True)
-
 # -----------------------------
 # 상단 배너
 # -----------------------------
 logo_path = "hanyang_logo.png"
 
-col1, col2 = st.columns([0.8, 8.2])
+col1, col2 = st.columns([0.7, 8.3])
 
 with col1:
-    st.markdown("<div style='padding-top:10px;'></div>", unsafe_allow_html=True)
+    st.markdown('<div style="height:10px;"></div>', unsafe_allow_html=True)
     if os.path.exists(logo_path):
-        st.image(logo_path, width=62)
+        st.image(logo_path, width=54)
     else:
         st.markdown(
-            "<div style='font-size:48px; text-align:center; padding-top:10px;'>🏫</div>",
+            "<div style='font-size:42px; text-align:center; padding-top:10px;'>🏫</div>",
             unsafe_allow_html=True
         )
 
@@ -314,11 +313,11 @@ with col2:
         <div class="banner-subtitle">
             학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
             - 입사신청기간, 합격자 발표, 생활관비 납부, 제출서류 등<br>
-             * 챗봇 오류 가능성을 감안하여, 중요사항은 원본 공지문 내용도 대조확인해주세요<br>
+            - 챗봇 오류 가능성을 감안하여, 중요사항은 원본 공지도 대조확인해 주세요<br><br>
             Answers are based on the dormitory recruitment guidelines and official documents.<br>
-            - Application period, announcement of successful applicants, dormitory fee payment, required documents etc.<br>
-             * Please note that chatbot errors may occur, so please check the original notice for important information. </div>
-             
+            - Application period, results, dormitory fee payment, required documents, etc.<br>
+            - For important matters, please check the original notice as well.
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1443,6 +1442,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
