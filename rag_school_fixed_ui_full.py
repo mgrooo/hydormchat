@@ -729,7 +729,7 @@ def load_all_pdfs_from_folder():
 def get_ui_text(lang="한국어"):
     if lang == "English":
         return {
-            "section_tools": "Tools",t
+            "section_tools": "Tools",
             "section_popular": "Popular Questions",
             "metric_total": "Total Questions",
             "metric_cache": "Cache",
@@ -1498,4 +1498,5 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
