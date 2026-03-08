@@ -1162,8 +1162,9 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
     )
 
     st.warning(
-        "⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.\n\n"
-        "⚠ For important matters, please also confirm with the original PDF."
+        "⚠ 중요사항은 반드시 공지문 원본을 함께 대조·확인해 주세요.\n\n"
+        "⚠ For important matters, please also confirm with the Original text of notice
+."
     )
 # -----------------------------
 # 사이드바
@@ -1498,5 +1499,6 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
