@@ -312,10 +312,12 @@ with col2:
         <div class="banner-subtitle">
             학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
             - 입사신청기간, 합격자 발표, 생활관비 납부, 제출서류, 문의처 등<br>
+             * 챗봇 오류 가능성을 감안하여, 중요사항은 원본 공지문 내용도 대조확인해주세요<br>
+
             Answers are based on the dormitory recruitment guidelines and official documents.<br>
             - Application period, announcement of successful applicants, dormitory fee payment, required documents, contact information, etc.
-
-    
+             * Please note that chatbot errors may occur, so please check the original notice for important information.
+             
     </div>
     """, unsafe_allow_html=True)
 
@@ -807,19 +809,7 @@ def get_ui_text(lang="한국어"):
         "recent_logs": "최근 로그 보기",
         "faq_title": "⭐ 자주 묻는 질문",
         "faq_caption": "버튼을 누르면 바로 질문할 수 있습니다.",
-        "guide": """
-        <div style="
-            background:#F7FAFC;
-            border:1px solid #D9E6F2;
-            border-radius:14px;
-            padding:14px 16px;
-            margin-bottom:18px;
-        ">
-            <b style="color:#0E4A84;">안내</b><br>
-            입사신청기간, 합격자 발표, 생활관비 납부, 제출서류, 문의처 등을 질문하면
-            등록된 모집요강 문서를 바탕으로 안내합니다.
-        </div>
-        """,
+
         "status_info_prefix": "현재 선택한 사용자 유형",
         "status_lang_prefix": "답변 언어",
         "status_caption": "등록된 PDF 페이지 수",
@@ -1457,6 +1447,7 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
 
 
 
