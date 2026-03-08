@@ -128,18 +128,22 @@ client = OpenAI(api_key=api_key)
 st.markdown("""
 <style>
 .block-container {
-    padding-top: 1.4rem;
-    padding-bottom: 2rem;
+    padding-top: 0.9rem;
+    padding-bottom: 1.4rem;
+    max-width: 980px;
 }
 
+/* 기본 버튼 */
 .stButton > button {
     background-color: #0E4A84;
     color: white;
     border: none;
-    border-radius: 10px;
-    padding: 0.55rem 1rem;
+    border-radius: 12px;
+    padding: 0.48rem 0.9rem;
     font-weight: 600;
+    font-size: 0.98rem;
     width: 100%;
+    box-shadow: 0 2px 8px rgba(14, 74, 132, 0.12);
 }
 .stButton > button:hover {
     background-color: #1B6BB8;
@@ -148,7 +152,10 @@ st.markdown("""
 
 div[data-baseweb="select"] > div {
     border-radius: 10px;
+    min-height: 44px;
+    font-size: 0.96rem;
 }
+
 div[data-testid="stAlert"] {
     border-radius: 12px;
 }
@@ -156,11 +163,14 @@ div[data-testid="stAlert"] {
 .streamlit-expanderHeader {
     font-weight: 700;
     color: #0E4A84;
+    font-size: 1rem;
 }
+
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
     color: #0E4A84;
 }
+
 section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     background: #F7FAFC;
     padding: 10px;
@@ -169,96 +179,119 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     margin-bottom: 8px;
 }
 
+/* 상단 배너 */
 .banner-card {
     background: linear-gradient(90deg, #0E4A84 0%, #1B6BB8 100%);
-    padding: 22px 24px;
-    border-radius: 18px;
-    margin-bottom: 14px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    padding: 16px 18px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
 .banner-title {
-    font-size: 2.1rem;
-    font-weight: 900;
-    letter-spacing: -0.5px;
+    font-size: 1.55rem;
+    font-weight: 850;
+    letter-spacing: -0.3px;
     color: #FFFFFF;
-    line-height: 1.25;
-    margin-bottom: 8px;
+    line-height: 1.22;
+    margin-bottom: 6px;
 }
 .banner-subtitle {
-    font-size: 1.08rem;
-    font-weight: 700;
+    font-size: 0.92rem;
+    font-weight: 600;
     color: #EAF3FF;
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
+/* 사용자 설정 박스 */
+.setting-box {
+    background:#F7FAFC;
+    border:1px solid #D9E6F2;
+    border-radius:14px;
+    padding:13px 15px;
+    margin-bottom:14px;
+}
+.setting-title {
+    font-size:0.98rem;
+    font-weight:800;
+    color:#0E4A84;
+    margin-bottom:4px;
+}
+.setting-desc {
+    font-size:0.88rem;
+    color:#4B5563;
+    line-height:1.5;
+}
+
+/* 사용법 박스 */
 .guide-box {
-    background: #FFF6D8;
-    border: 2px solid #D9A400;
-    border-radius: 18px;
-    padding: 18px 20px;
-    margin-bottom: 22px;
-    font-size: 18px;
-    line-height: 1.8;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    background: #FFF8E8;
+    border: 1.5px solid #E2BC58;
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    line-height: 1.65;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 .guide-title {
-    font-weight: 900;
+    font-weight: 850;
     color: #8A5A00;
-    margin-bottom: 10px;
-    font-size: 1.28rem;
+    margin-bottom: 8px;
+    font-size: 1.02rem;
 }
 .required-badge {
     background: #D62828;
     color: white;
-    font-size: 0.9rem;
-    padding: 4px 10px;
+    font-size: 0.78rem;
+    padding: 3px 9px;
     border-radius: 999px;
-    margin-left: 8px;
+    margin-left: 6px;
     vertical-align: middle;
 }
 .guide-main {
-    font-weight: 800;
+    font-weight: 700;
     color: #1F3A5F;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    font-size: 0.93rem;
 }
 .guide-note {
     background: #FFFDF4;
-    border: 1.5px solid #E7C96B;
-    border-radius: 12px;
-    padding: 12px 14px;
+    border: 1px solid #E7C96B;
+    border-radius: 10px;
+    padding: 10px 12px;
     color: #6B4E00;
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 10px;
+    font-size: 0.87rem;
+    font-weight: 600;
+    margin-bottom: 8px;
 }
 .guide-warning {
     background: #FFF3F3;
-    border: 1.5px solid #E09A9A;
-    border-radius: 12px;
-    padding: 12px 14px;
+    border: 1px solid #E09A9A;
+    border-radius: 10px;
+    padding: 10px 12px;
     color: #8B2E2E;
-    font-size: 0.98rem;
-    font-weight: 700;
+    font-size: 0.86rem;
+    font-weight: 600;
 }
 
+/* 사이드바 카드 */
 .sidebar-card {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
-    border-radius: 16px;
-    padding: 16px 14px;
+    border-radius: 14px;
+    padding: 14px 12px;
     text-align: center;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 .sidebar-ko {
-    font-size: 1.2rem;
-    font-weight: 900;
+    font-size: 1.02rem;
+    font-weight: 850;
     color: #0E4A84;
-    margin-top: 6px;
+    margin-top: 4px;
 }
 .sidebar-en {
-    font-size: 0.96rem;
+    font-size: 0.84rem;
     color: #4A5568;
-    margin-top: 2px;
+    margin-top: 1px;
 }
 .fake-disabled {
     display: inline-block;
@@ -266,38 +299,67 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     text-align: center;
     background: #D1D5DB;
     color: #6B7280;
-    padding: 0.75rem 1rem;
+    padding: 0.72rem 0.9rem;
     border-radius: 10px;
     font-weight: 700;
+    font-size: 0.9rem;
     margin-top: 10px;
     cursor: not-allowed;
     user-select: none;
     pointer-events: none;
 }
 .small-note {
-    font-size: 0.88rem;
+    font-size: 0.82rem;
     color: #6B7280;
     margin-top: 8px;
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
+/* 채팅 */
 div[data-testid="stChatMessage"] {
-    border-radius: 16px;
-    padding: 6px 8px;
+    border-radius: 14px;
+    padding: 5px 7px;
+}
+
+/* FAQ 버튼 영역 살짝 촘촘하게 */
+div[data-testid="column"] {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    .block-container {
+        padding-top: 0.7rem;
+        padding-bottom: 1rem;
+    }
+    .banner-title {
+        font-size: 1.3rem;
+    }
+    .banner-subtitle {
+        font-size: 0.86rem;
+    }
+    .guide-title {
+        font-size: 0.95rem;
+    }
+    .guide-main,
+    .guide-note,
+    .guide-warning {
+        font-size: 0.84rem;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
-
 # -----------------------------
 # 상단 배너
 # -----------------------------
 logo_path = "hanyang_logo.png"
 
-col1, col2 = st.columns([1.2, 8])
+col1, col2 = st.columns([0.8, 8.2])
 
 with col1:
     if os.path.exists(logo_path):
-        st.image(logo_path, width=90)
+        st.image(logo_path, width=56)
     else:
         st.markdown(
             "<div style='font-size:58px; text-align:center;'>🏫</div>",
@@ -307,7 +369,7 @@ with col1:
 with col2:
     st.markdown("""
     <div class="banner-card">
-        <div class="banner-title">한양대(서울) 학생생활관 챗봇(BETA) - 토리</div>
+        <div class="banner-title">한양대(서울) 학생생활관 챗봇 · 토리</div>
         <div class="banner-subtitle">
             학생생활관 모집요강 및 안내문서를 기반으로 답변합니다.<br>
             Answers are based on the dormitory recruitment guidelines and official documents.
@@ -1105,30 +1167,12 @@ current_ui_lang = st.session_state.get("answer_language", "한국어")
 ui = get_ui_text(current_ui_lang)
 
 st.markdown("""
-<div style="
-background:#F7FAFC;
-border:1px solid #D9E6F2;
-border-radius:16px;
-padding:16px 18px;
-margin-bottom:18px;
-">
-<div style="
-font-size:1.08rem;
-font-weight:800;
-color:#0E4A84;
-margin-bottom:8px;
-">
-사용자 설정 / User Settings
-</div>
-
-<div style="
-font-size:0.95rem;
-color:#4B5563;
-line-height:1.6;
-">
-먼저 아래 항목을 선택해 주세요.<br>
-Please select the options below first.
-</div>
+<div class="setting-box">
+    <div class="setting-title">사용자 설정 / User Settings</div>
+    <div class="setting-desc">
+        먼저 아래 항목을 선택해 주세요.<br>
+        Please select the options below first.
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1511,3 +1555,4 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
+
