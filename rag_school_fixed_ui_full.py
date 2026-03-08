@@ -132,7 +132,6 @@ st.markdown("""
     padding-bottom: 2rem;
 }
 
-/* 기본 버튼 */
 .stButton > button {
     background-color: #0E4A84;
     color: white;
@@ -147,7 +146,6 @@ st.markdown("""
     color: white;
 }
 
-/* select / alert */
 div[data-baseweb="select"] > div {
     border-radius: 10px;
 }
@@ -155,7 +153,6 @@ div[data-testid="stAlert"] {
     border-radius: 12px;
 }
 
-/* expander / sidebar */
 .streamlit-expanderHeader {
     font-weight: 700;
     color: #0E4A84;
@@ -172,7 +169,6 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     margin-bottom: 8px;
 }
 
-/* 상단 배너 */
 .banner-card {
     background: linear-gradient(90deg, #0E4A84 0%, #1B6BB8 100%);
     padding: 22px 24px;
@@ -195,7 +191,6 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     line-height: 1.5;
 }
 
-/* 사용법 박스 */
 .guide-box {
     background: #FFF6D8;
     border: 2px solid #D9A400;
@@ -246,7 +241,6 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     font-weight: 700;
 }
 
-/* 사이드바 카드 */
 .sidebar-card {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
@@ -287,7 +281,6 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
     line-height: 1.5;
 }
 
-/* 채팅 박스 */
 div[data-testid="stChatMessage"] {
     border-radius: 16px;
     padding: 6px 8px;
@@ -786,8 +779,7 @@ def get_ui_text(lang="한국어"):
             "user_type": "User type",
             "response_language": "Response language",
             "sources": "Sources",
-            "top_questions_label": "Top Questions",
-            "ask_first": "질문 입력 / Enter your question"
+            "top_questions_label": "Top Questions"
         }
 
     return {
@@ -837,8 +829,7 @@ def get_ui_text(lang="한국어"):
         "user_type": "선택 유형",
         "response_language": "답변 언어",
         "sources": "참고 자료",
-        "top_questions_label": "자주 나온 질문 통계",
-        "ask_first": "질문 입력 / Enter your question"
+        "top_questions_label": "자주 나온 질문 통계"
     }
 
 
@@ -1352,29 +1343,30 @@ for msg in st.session_state.chat_history:
             st.caption(f"{msg_ui['sources']}: {msg['sources_text']}")
 
 # -----------------------------
-# 질문 입력 (FAQ보다 위)
+# 질문 입력
 # -----------------------------
-st.subheader(ui["ask_first"])
 typed_prompt = st.chat_input(ui["chat_input"])
 
 # -----------------------------
-# FAQ 버튼 (모바일 2열)
+# FAQ 버튼 (질문창 아래 / 접기-펼치기)
 # -----------------------------
 quick_questions = build_quick_questions(
     answer_language=answer_language,
     logs=current_logs
 )
 
-st.subheader(ui["faq_title"])
-st.caption(ui["faq_caption"])
+faq_expander_title = "⭐ 자주 묻는 질문 보기" if answer_language == "한국어" else "⭐ View Frequently Asked Questions"
 
-cols = st.columns(2)
-for i, q in enumerate(quick_questions):
-    button_key = f"quick_btn_{i}_{normalize_question_for_button(q)}"
-    with cols[i % 2]:
-        if st.button(q, key=button_key, use_container_width=True):
-            st.session_state.pending_question = q
-            st.rerun()
+with st.expander(faq_expander_title, expanded=False):
+    st.caption(ui["faq_caption"])
+
+    cols = st.columns(2)
+    for i, q in enumerate(quick_questions):
+        button_key = f"quick_btn_{i}_{normalize_question_for_button(q)}"
+        with cols[i % 2]:
+            if st.button(q, key=button_key, use_container_width=True):
+                st.session_state.pending_question = q
+                st.rerun()
 
 prompt = ""
 if st.session_state.pending_question:
