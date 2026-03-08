@@ -224,53 +224,53 @@ section[data-testid="stSidebar"] div[data-testid="stMetric"] {
 
 /* 사용법 박스 */
 .guide-box {
-    background: #FFF8E8;
-    border: 1.5px solid #E2BC58;
+    background: #FCFBF7;
+    border: 1px solid #E9E3D7;
     border-radius: 16px;
     padding: 14px 16px;
     margin-bottom: 16px;
-    line-height: 1.65;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    line-height: 1.6;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.03);
 }
 .guide-title {
-    font-weight: 850;
-    color: #8A5A00;
+    font-weight: 800;
+    color: #6F5A2A;
     margin-bottom: 8px;
-    font-size: 1.02rem;
+    font-size: 1rem;
 }
 .required-badge {
-    background: #D62828;
+    background: #E86A5B;
     color: white;
-    font-size: 0.78rem;
-    padding: 3px 9px;
+    font-size: 0.74rem;
+    padding: 3px 8px;
     border-radius: 999px;
     margin-left: 6px;
     vertical-align: middle;
 }
 .guide-main {
-    font-weight: 700;
-    color: #1F3A5F;
+    font-weight: 650;
+    color: #243B5A;
     margin-bottom: 6px;
-    font-size: 0.93rem;
+    font-size: 0.91rem;
 }
 .guide-note {
-    background: #FFFDF4;
-    border: 1px solid #E7C96B;
+    background: #F8F5EE;
+    border: 1px solid #E8DFCF;
     border-radius: 10px;
     padding: 10px 12px;
-    color: #6B4E00;
-    font-size: 0.87rem;
-    font-weight: 600;
+    color: #6A5C3A;
+    font-size: 0.85rem;
+    font-weight: 550;
     margin-bottom: 8px;
 }
 .guide-warning {
-    background: #FFF3F3;
-    border: 1px solid #E09A9A;
+    background: #FAF3F1;
+    border: 1px solid #E9D6D1;
     border-radius: 10px;
     padding: 10px 12px;
-    color: #8B2E2E;
-    font-size: 0.86rem;
-    font-weight: 600;
+    color: #7A4B44;
+    font-size: 0.85rem;
+    font-weight: 550;
 }
 
 /* 사이드바 카드 */
@@ -321,13 +321,13 @@ div[data-testid="stChatMessage"] {
     padding: 5px 7px;
 }
 
-/* FAQ 버튼 영역 살짝 촘촘하게 */
+/* FAQ 버튼 간격 */
 div[data-testid="column"] {
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
 }
 
-/* 모바일 최적화 */
+/* 모바일 */
 @media (max-width: 768px) {
     .block-container {
         padding-top: 0.7rem;
@@ -350,6 +350,7 @@ div[data-testid="column"] {
 }
 </style>
 """, unsafe_allow_html=True)
+
 # -----------------------------
 # 상단 배너
 # -----------------------------
@@ -359,10 +360,10 @@ col1, col2 = st.columns([0.8, 8.2])
 
 with col1:
     if os.path.exists(logo_path):
-        st.image(logo_path, width=56)
+        st.image(logo_path, width=62)
     else:
         st.markdown(
-            "<div style='font-size:58px; text-align:center;'>🏫</div>",
+            "<div style='font-size:48px; text-align:center;'>🏫</div>",
             unsafe_allow_html=True
         )
 
@@ -1161,7 +1162,7 @@ if "admin_authenticated" not in st.session_state:
 current_logs = read_question_logs()
 
 # -----------------------------
-# 본문 상단 사용자 설정 (모바일 우선)
+# 본문 상단 사용자 설정
 # -----------------------------
 current_ui_lang = st.session_state.get("answer_language", "한국어")
 ui = get_ui_text(current_ui_lang)
@@ -1197,28 +1198,28 @@ ui = get_ui_text(answer_language)
 # -----------------------------
 st.markdown("""
 <div class="guide-box">
-<div class="guide-title">
-📌 사용법 / How to Use
-<span class="required-badge">필수 / Required</span>
-</div>
+    <div class="guide-title">
+        📌 사용법 / How to Use
+        <span class="required-badge">필수 / Required</span>
+    </div>
 
-<div class="guide-main">
-사용법 : (1) 사용 언어 선택(한국어, 영어) (2) 사용자 유형 선택 (3) 질문 입력
-</div>
+    <div class="guide-main">
+        사용법: (1) 사용 언어 선택(한국어, 영어) (2) 사용자 유형 선택 (3) 질문 입력
+    </div>
 
-<div class="guide-main">
-How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
-</div>
+    <div class="guide-main">
+        How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter your question
+    </div>
 
-<div class="guide-note">
-※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.<br>
-※ Following these steps is required for more accurate answers.
-</div>
+    <div class="guide-note">
+        ※ 위 순서를 지켜야 더 정확한 답변이 가능합니다.<br>
+        ※ Following these steps helps improve answer accuracy.
+    </div>
 
-<div class="guide-warning">
-⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.<br>
-⚠ For important matters, please always compare and confirm with the original PDF as well.
-</div>
+    <div class="guide-warning">
+        ⚠ 중요사항은 반드시 원본 PDF도 함께 대조·확인해 주세요.<br>
+        ⚠ For important matters, please also confirm with the original PDF.
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1228,11 +1229,11 @@ How to use: (1) Select language (Korean, English) (2) Select user type (3) Enter
 with st.sidebar:
     st.markdown("""
     <div class="sidebar-card">
-    <div style="font-size:48px;">🏫</div>
+    <div style="font-size:40px;">🏫</div>
     <div class="sidebar-ko">한양대(서울)</div>
     <div class="sidebar-en">Hanyang Univ. (Seoul)</div>
 
-    <div class="sidebar-ko" style="margin-top:14px;">
+    <div class="sidebar-ko" style="margin-top:10px;">
     학생생활관 챗봇
     </div>
 
@@ -1555,4 +1556,3 @@ if prompt:
             sources_text=sources_text,
             answer_preview=answer
         )
-
